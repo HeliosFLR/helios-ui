@@ -2,15 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Dark mode (default) */
+/* Dark mode (default) - Helios Dune Theme */
 :root,
 .dark {
   --background: #050505;
   --foreground: #fafafa;
-  --helios-gold: #f59e0b;
-  --helios-orange: #f97316;
-  --helios-fire: #ea580c;
-  --helios-ember: #dc2626;
+  --helios-gold: #C9A76C;
+  --helios-sand: #B8956A;
+  --helios-earth: #9A7B4F;
+  --helios-light: #DFC9A3;
+  --helios-cream: #F6F0E8;
   --card-bg: rgba(24, 24, 27, 0.5);
   --card-border: rgba(255, 255, 255, 0.05);
   --text-primary: #ffffff;
@@ -22,10 +23,11 @@
 .light {
   --background: #fefefe;
   --foreground: #0f0f0f;
-  --helios-gold: #d97706;
-  --helios-orange: #ea580c;
-  --helios-fire: #dc2626;
-  --helios-ember: #b91c1c;
+  --helios-gold: #9A7B4F;
+  --helios-sand: #B8956A;
+  --helios-earth: #7D6340;
+  --helios-light: #C9A76C;
+  --helios-cream: #F6F0E8;
   --card-bg: rgba(255, 255, 255, 0.8);
   --card-border: rgba(0, 0, 0, 0.08);
   --text-primary: #0f0f0f;
@@ -65,7 +67,7 @@ h1, h2, h3, .font-display {
   font-feature-settings: 'tnum' on, 'lnum' on;
 }
 
-/* Helios Animated Background - Dark Mode */
+/* Helios Dune Animated Background - Dark Mode */
 .dark body::before,
 :root body::before {
   content: '';
@@ -75,16 +77,16 @@ h1, h2, h3, .font-display {
   right: 0;
   bottom: 0;
   background:
-    radial-gradient(ellipse at 50% -20%, rgba(245, 158, 11, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 20% 50%, rgba(249, 115, 22, 0.08) 0%, transparent 40%),
-    radial-gradient(ellipse at 80% 50%, rgba(234, 88, 12, 0.08) 0%, transparent 40%),
-    radial-gradient(ellipse at 50% 100%, rgba(220, 38, 38, 0.05) 0%, transparent 50%);
+    radial-gradient(ellipse at 50% -20%, rgba(201, 167, 108, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 50%, rgba(184, 149, 106, 0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 50%, rgba(154, 123, 79, 0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 100%, rgba(125, 99, 64, 0.04) 0%, transparent 50%);
   pointer-events: none;
   z-index: -1;
   animation: backgroundPulse 8s ease-in-out infinite;
 }
 
-/* Helios Animated Background - Light Mode */
+/* Helios Dune Animated Background - Light Mode */
 .light body::before {
   content: '';
   position: fixed;
@@ -93,10 +95,10 @@ h1, h2, h3, .font-display {
   right: 0;
   bottom: 0;
   background:
-    radial-gradient(ellipse at 50% -20%, rgba(245, 158, 11, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse at 20% 50%, rgba(249, 115, 22, 0.08) 0%, transparent 40%),
-    radial-gradient(ellipse at 80% 50%, rgba(234, 88, 12, 0.08) 0%, transparent 40%),
-    linear-gradient(to bottom, rgba(254, 243, 199, 0.3) 0%, transparent 30%);
+    radial-gradient(ellipse at 50% -20%, rgba(201, 167, 108, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 50%, rgba(184, 149, 106, 0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 50%, rgba(154, 123, 79, 0.06) 0%, transparent 40%),
+    linear-gradient(to bottom, rgba(246, 240, 232, 0.4) 0%, transparent 30%);
   pointer-events: none;
   z-index: -1;
   animation: backgroundPulse 8s ease-in-out infinite;
@@ -107,7 +109,7 @@ h1, h2, h3, .font-display {
   50% { opacity: 0.7; }
 }
 
-/* Floating Sun Particles */
+/* Floating Dune Particles */
 body::after {
   content: '';
   position: fixed;
@@ -116,19 +118,19 @@ body::after {
   right: 0;
   bottom: 0;
   background-image:
-    radial-gradient(2px 2px at 100px 100px, rgba(245, 158, 11, 0.4) 50%, transparent 50%),
-    radial-gradient(2px 2px at 400px 200px, rgba(249, 115, 22, 0.3) 50%, transparent 50%),
-    radial-gradient(1px 1px at 200px 400px, rgba(245, 158, 11, 0.5) 50%, transparent 50%),
-    radial-gradient(2px 2px at 600px 300px, rgba(234, 88, 12, 0.3) 50%, transparent 50%),
-    radial-gradient(1px 1px at 800px 150px, rgba(245, 158, 11, 0.4) 50%, transparent 50%),
-    radial-gradient(2px 2px at 300px 500px, rgba(249, 115, 22, 0.25) 50%, transparent 50%),
-    radial-gradient(1px 1px at 700px 450px, rgba(245, 158, 11, 0.35) 50%, transparent 50%),
-    radial-gradient(2px 2px at 150px 300px, rgba(234, 88, 12, 0.2) 50%, transparent 50%);
+    radial-gradient(2px 2px at 100px 100px, rgba(201, 167, 108, 0.35) 50%, transparent 50%),
+    radial-gradient(2px 2px at 400px 200px, rgba(184, 149, 106, 0.25) 50%, transparent 50%),
+    radial-gradient(1px 1px at 200px 400px, rgba(223, 201, 163, 0.4) 50%, transparent 50%),
+    radial-gradient(2px 2px at 600px 300px, rgba(154, 123, 79, 0.25) 50%, transparent 50%),
+    radial-gradient(1px 1px at 800px 150px, rgba(201, 167, 108, 0.35) 50%, transparent 50%),
+    radial-gradient(2px 2px at 300px 500px, rgba(184, 149, 106, 0.2) 50%, transparent 50%),
+    radial-gradient(1px 1px at 700px 450px, rgba(201, 167, 108, 0.3) 50%, transparent 50%),
+    radial-gradient(2px 2px at 150px 300px, rgba(154, 123, 79, 0.15) 50%, transparent 50%);
   background-size: 1000px 600px;
   animation: floatParticles 30s linear infinite;
   pointer-events: none;
   z-index: -1;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 @keyframes floatParticles {
@@ -136,7 +138,7 @@ body::after {
   100% { transform: translateY(-600px) translateX(100px); }
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - Dune Theme */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -147,29 +149,29 @@ body::after {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(245, 158, 11, 0.3), rgba(234, 88, 12, 0.3));
+  background: linear-gradient(180deg, rgba(201, 167, 108, 0.3), rgba(154, 123, 79, 0.3));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(245, 158, 11, 0.5), rgba(234, 88, 12, 0.5));
+  background: linear-gradient(180deg, rgba(201, 167, 108, 0.5), rgba(154, 123, 79, 0.5));
 }
 
 /* Focus States */
 *:focus-visible {
-  outline: 2px solid rgba(245, 158, 11, 0.5);
+  outline: 2px solid rgba(201, 167, 108, 0.5);
   outline-offset: 2px;
 }
 
 /* Selection */
 ::selection {
-  background: rgba(245, 158, 11, 0.4);
+  background: rgba(201, 167, 108, 0.4);
   color: white;
 }
 
-/* RainbowKit Overrides */
+/* RainbowKit Overrides - Dune Theme */
 [data-rk] {
-  --rk-colors-accentColor: #f59e0b;
+  --rk-colors-accentColor: #C9A76C;
   --rk-colors-modalBackground: #0f0f0f;
 }
 
@@ -178,10 +180,10 @@ body::after {
 /* Pulse Glow */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2), 0 0 40px rgba(245, 158, 11, 0.1);
+    box-shadow: 0 0 20px rgba(201, 167, 108, 0.2), 0 0 40px rgba(201, 167, 108, 0.1);
   }
   50% {
-    box-shadow: 0 0 40px rgba(245, 158, 11, 0.4), 0 0 80px rgba(245, 158, 11, 0.2);
+    box-shadow: 0 0 40px rgba(201, 167, 108, 0.4), 0 0 80px rgba(201, 167, 108, 0.2);
   }
 }
 
@@ -209,7 +211,7 @@ body::after {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(245, 158, 11, 0.1) 50%,
+    rgba(201, 167, 108, 0.1) 50%,
     transparent 100%
   );
   background-size: 200% 100%;
@@ -219,10 +221,10 @@ body::after {
 /* Border Glow Animation */
 @keyframes borderGlow {
   0%, 100% {
-    border-color: rgba(245, 158, 11, 0.2);
+    border-color: rgba(201, 167, 108, 0.2);
   }
   50% {
-    border-color: rgba(245, 158, 11, 0.5);
+    border-color: rgba(201, 167, 108, 0.5);
   }
 }
 
@@ -345,10 +347,10 @@ body::after {
 /* Glow Pulse */
 @keyframes glowPulse {
   0%, 100% {
-    filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.3));
+    filter: drop-shadow(0 0 10px rgba(201, 167, 108, 0.3));
   }
   50% {
-    filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.6));
+    filter: drop-shadow(0 0 25px rgba(201, 167, 108, 0.6));
   }
 }
 
@@ -382,26 +384,26 @@ body::after {
 }
 
 .glass-card-hover:hover {
-  border-color: rgba(245, 158, 11, 0.3);
+  border-color: rgba(201, 167, 108, 0.3);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.5),
-    0 0 30px rgba(245, 158, 11, 0.1),
+    0 0 30px rgba(201, 167, 108, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transform: translateY(-2px);
 }
 
-/* ===== HELIOS BUTTON STYLES ===== */
+/* ===== HELIOS DUNE BUTTON STYLES ===== */
 
 .btn-helios {
   position: relative;
-  background: linear-gradient(135deg, #f59e0b 0%, #f97316 50%, #ea580c 100%);
-  color: black;
+  background: linear-gradient(135deg, #C9A76C 0%, #B8956A 50%, #9A7B4F 100%);
+  color: #1a1a1a;
   font-weight: 600;
   border-radius: 1rem;
   padding: 1rem 1.5rem;
   overflow: hidden;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 20px rgba(201, 167, 108, 0.3);
 }
 
 .btn-helios::before {
@@ -426,12 +428,12 @@ body::after {
 
 .btn-helios:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(245, 158, 11, 0.5);
+  box-shadow: 0 8px 30px rgba(201, 167, 108, 0.5);
 }
 
 .btn-helios:active {
   transform: translateY(0);
-  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 15px rgba(201, 167, 108, 0.3);
 }
 
 .btn-helios:disabled {
@@ -443,9 +445,9 @@ body::after {
 
 /* Secondary Button */
 .btn-helios-secondary {
-  background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: rgba(201, 167, 108, 0.1);
+  color: #C9A76C;
+  border: 1px solid rgba(201, 167, 108, 0.3);
   font-weight: 500;
   border-radius: 0.75rem;
   padding: 0.5rem 1rem;
@@ -453,9 +455,9 @@ body::after {
 }
 
 .btn-helios-secondary:hover {
-  background: rgba(245, 158, 11, 0.2);
-  border-color: rgba(245, 158, 11, 0.5);
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+  background: rgba(201, 167, 108, 0.2);
+  border-color: rgba(201, 167, 108, 0.5);
+  box-shadow: 0 0 20px rgba(201, 167, 108, 0.15);
 }
 
 /* ===== INPUT STYLES ===== */
@@ -471,8 +473,8 @@ body::after {
 
 .input-helios:focus {
   outline: none;
-  border-color: rgba(245, 158, 11, 0.5);
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.1);
+  border-color: rgba(201, 167, 108, 0.5);
+  box-shadow: 0 0 20px rgba(201, 167, 108, 0.1);
 }
 
 .input-helios:hover:not(:focus) {
@@ -494,9 +496,9 @@ body::after {
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    #f59e0b 60deg,
-    #f97316 120deg,
-    #ea580c 180deg,
+    #C9A76C 60deg,
+    #B8956A 120deg,
+    #9A7B4F 180deg,
     transparent 240deg,
     transparent 360deg
   );
@@ -595,7 +597,7 @@ input[type="range"] {
 }
 
 input[type="range"]::-webkit-slider-track {
-  background: linear-gradient(90deg, rgba(245, 158, 11, 0.2), rgba(234, 88, 12, 0.2));
+  background: linear-gradient(90deg, rgba(201, 167, 108, 0.2), rgba(154, 123, 79, 0.2));
   height: 8px;
   border-radius: 4px;
 }
@@ -605,16 +607,16 @@ input[type="range"]::-webkit-slider-thumb {
   appearance: none;
   width: 20px;
   height: 20px;
-  background: linear-gradient(135deg, #f59e0b, #f97316);
+  background: linear-gradient(135deg, #C9A76C, #B8956A);
   border-radius: 50%;
   margin-top: -6px;
-  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 2px 10px rgba(201, 167, 108, 0.4);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.6);
+  box-shadow: 0 4px 20px rgba(201, 167, 108, 0.6);
 }
 
 /* ===== TOOLTIP ===== */
@@ -663,7 +665,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(245, 158, 11, 0.1) 50%,
+    rgba(201, 167, 108, 0.1) 50%,
     transparent 100%
   );
   animation: shimmer 2s infinite;
@@ -685,7 +687,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(201, 167, 108, 0.3) 0%, transparent 70%);
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -701,7 +703,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 .price-impact-medium {
-  color: #f59e0b;
+  color: #C9A76C;
 }
 
 .price-impact-high {
@@ -861,15 +863,15 @@ input[type="range"]::-webkit-slider-thumb:hover {
   animation: notificationSlide 3s ease-in-out forwards;
 }
 
-/* ===== RAINBOW BORDER ===== */
+/* ===== RAINBOW BORDER - Dune variant ===== */
 
 @keyframes rainbowBorder {
-  0% { border-color: #f59e0b; }
-  20% { border-color: #f97316; }
-  40% { border-color: #ea580c; }
-  60% { border-color: #8b5cf6; }
+  0% { border-color: #C9A76C; }
+  20% { border-color: #B8956A; }
+  40% { border-color: #9A7B4F; }
+  60% { border-color: #DFC9A3; }
   80% { border-color: #22c55e; }
-  100% { border-color: #f59e0b; }
+  100% { border-color: #C9A76C; }
 }
 
 .animate-rainbow-border {
@@ -884,7 +886,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 .hover-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(245, 158, 11, 0.2);
+  box-shadow: 0 12px 40px rgba(201, 167, 108, 0.2);
 }
 
 /* ===== INTERACTIVE CARD ===== */
@@ -896,10 +898,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 .interactive-card:hover {
   transform: translateY(-4px) scale(1.02);
-  border-color: rgba(245, 158, 11, 0.4);
+  border-color: rgba(201, 167, 108, 0.4);
   box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.3),
-    0 0 40px rgba(245, 158, 11, 0.15);
+    0 0 40px rgba(201, 167, 108, 0.15);
 }
 
 .interactive-card:active {
@@ -910,9 +912,9 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 .glow-text {
   text-shadow:
-    0 0 10px rgba(245, 158, 11, 0.5),
-    0 0 20px rgba(245, 158, 11, 0.3),
-    0 0 30px rgba(245, 158, 11, 0.2);
+    0 0 10px rgba(201, 167, 108, 0.5),
+    0 0 20px rgba(201, 167, 108, 0.3),
+    0 0 30px rgba(201, 167, 108, 0.2);
 }
 
 /* ===== ACHIEVEMENT BADGE ===== */
@@ -928,7 +930,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
   content: '';
   position: absolute;
   inset: -3px;
-  background: linear-gradient(45deg, #f59e0b, #f97316, #ea580c, #8b5cf6, #f59e0b);
+  background: linear-gradient(45deg, #C9A76C, #B8956A, #9A7B4F, #DFC9A3, #C9A76C);
   background-size: 300% 300%;
   border-radius: inherit;
   animation: gradientFlow 2s ease infinite;
@@ -952,8 +954,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(234, 88, 12, 0.1));
-  border: 1px solid rgba(249, 115, 22, 0.3);
+  background: linear-gradient(135deg, rgba(184, 149, 106, 0.2), rgba(154, 123, 79, 0.1));
+  border: 1px solid rgba(184, 149, 106, 0.3);
   border-radius: 2rem;
 }
 
@@ -973,7 +975,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 .xp-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #f59e0b, #f97316, #ea580c);
+  background: linear-gradient(90deg, #C9A76C, #B8956A, #9A7B4F);
   border-radius: 4px;
   transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }

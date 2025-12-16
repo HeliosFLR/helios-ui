@@ -58,6 +58,9 @@ export function RebalanceModal({ isOpen, onClose, position, onSuccess }: Rebalan
   const [showConfetti, setShowConfetti] = useState(false)
   const [xpGained, setXpGained] = useState(0)
   const [errorMessage, setErrorMessage] = useState('')
+
+  // Check for decimal mismatch - pools with different decimals have a known bug
+  const hasDecimalMismatch = position.tokenX.decimals !== position.tokenY.decimals
   const [removedAmountX, setRemovedAmountX] = useState<bigint>(BigInt(0))
   const [removedAmountY, setRemovedAmountY] = useState<bigint>(BigInt(0))
   const [removeProcessed, setRemoveProcessed] = useState(false)
@@ -330,6 +333,7 @@ export function RebalanceModal({ isOpen, onClose, position, onSuccess }: Rebalan
               onRebalance={handleRebalance}
               currentBins={{ min: minBin, max: maxBin }}
               newBins={{ min: newMinBin, max: newMaxBin }}
+              hasDecimalMismatch={hasDecimalMismatch}
             />
           )}
 
@@ -371,6 +375,7 @@ function PreviewStep({
   onRebalance,
   currentBins,
   newBins,
+  hasDecimalMismatch,
 }: {
   position: Position
   newBinRange: number
@@ -381,9 +386,25 @@ function PreviewStep({
   onRebalance: () => void
   currentBins: { min: number; max: number }
   newBins: { min: number; max: number }
+  hasDecimalMismatch: boolean
 }) {
   return (
     <div className="space-y-6">
+      {/* Decimal Mismatch Warning */}
+      {hasDecimalMismatch && (
+        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-red-400 font-medium text-sm">Rebalance Not Available</p>
+              <p className="text-red-400/70 text-xs mt-1">
+                This pool has different token decimals ({position.tokenX.decimals} vs {position.tokenY.decimals}) which causes price calculation issues. Rebalancing is disabled until the contract is fixed.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="text-center">
         <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 mb-4">
@@ -496,11 +517,15 @@ function PreviewStep({
       {/* Rebalance Button */}
       <button
         onClick={onRebalance}
-        className="w-full btn-helios flex items-center justify-center gap-3 py-4 text-lg"
+        disabled={hasDecimalMismatch}
+        className={cn(
+          "w-full btn-helios flex items-center justify-center gap-3 py-4 text-lg",
+          hasDecimalMismatch && "opacity-50 cursor-not-allowed"
+        )}
       >
         <Zap className="h-5 w-5" />
-        Rebalance Now
-        <Flame className="h-5 w-5 animate-fire-flicker" />
+        {hasDecimalMismatch ? 'Rebalance Unavailable' : 'Rebalance Now'}
+        {!hasDecimalMismatch && <Flame className="h-5 w-5 animate-fire-flicker" />}
       </button>
     </div>
   )

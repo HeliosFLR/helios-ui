@@ -16,17 +16,34 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        // Helios Dune Palette - Desert/Sand vibes
         helios: {
-          gold: "#f59e0b",
-          orange: "#f97316",
-          fire: "#ea580c",
-          ember: "#dc2626",
+          gold: "#C9A76C",      // Primary - Desert Gold
+          sand: "#B8956A",      // Accent - Warm Sand
+          light: "#DFC9A3",     // Highlight - Light Sand
+          earth: "#9A7B4F",     // Dark - Earth tone
+          cream: "#F6F0E8",     // Warm white - Dune Cream
+          stone: "#D4CFC8",     // Warm gray - Stone
+        },
+        // Extended dune palette
+        dune: {
+          50: "#FAF7F2",
+          100: "#F6F0E8",
+          200: "#EDE4D6",
+          300: "#DFC9A3",
+          400: "#C9A76C",
+          500: "#B8956A",
+          600: "#9A7B4F",
+          700: "#7D6340",
+          800: "#5E4A30",
+          900: "#3F3220",
         },
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-        "helios-gradient": "linear-gradient(135deg, #f59e0b 0%, #f97316 50%, #ea580c 100%)",
+        "helios-gradient": "linear-gradient(135deg, #C9A76C 0%, #B8956A 50%, #9A7B4F 100%)",
+        "dune-gradient": "linear-gradient(135deg, #DFC9A3 0%, #C9A76C 50%, #B8956A 100%)",
       },
       animation: {
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
@@ -45,10 +62,10 @@ const config: Config = {
       keyframes: {
         "pulse-glow": {
           "0%, 100%": {
-            boxShadow: "0 0 20px rgba(245, 158, 11, 0.2), 0 0 40px rgba(245, 158, 11, 0.1)",
+            boxShadow: "0 0 20px rgba(201, 167, 108, 0.2), 0 0 40px rgba(201, 167, 108, 0.1)",
           },
           "50%": {
-            boxShadow: "0 0 40px rgba(245, 158, 11, 0.4), 0 0 80px rgba(245, 158, 11, 0.2)",
+            boxShadow: "0 0 40px rgba(201, 167, 108, 0.4), 0 0 80px rgba(201, 167, 108, 0.2)",
           },
         },
         sunRays: {
@@ -60,8 +77,8 @@ const config: Config = {
           "100%": { backgroundPosition: "200% 0" },
         },
         borderGlow: {
-          "0%, 100%": { borderColor: "rgba(245, 158, 11, 0.2)" },
-          "50%": { borderColor: "rgba(245, 158, 11, 0.5)" },
+          "0%, 100%": { borderColor: "rgba(201, 167, 108, 0.2)" },
+          "50%": { borderColor: "rgba(201, 167, 108, 0.5)" },
         },
         successBurst: {
           "0%": { transform: "scale(0.8)", opacity: "0" },
@@ -97,14 +114,15 @@ const config: Config = {
           "100%": { transform: "scale(1)", opacity: "1" },
         },
         glowPulse: {
-          "0%, 100%": { filter: "drop-shadow(0 0 10px rgba(245, 158, 11, 0.3))" },
-          "50%": { filter: "drop-shadow(0 0 25px rgba(245, 158, 11, 0.6))" },
+          "0%, 100%": { filter: "drop-shadow(0 0 10px rgba(201, 167, 108, 0.3))" },
+          "50%": { filter: "drop-shadow(0 0 25px rgba(201, 167, 108, 0.6))" },
         },
       },
       boxShadow: {
-        "helios": "0 0 30px rgba(245, 158, 11, 0.3)",
-        "helios-lg": "0 0 50px rgba(245, 158, 11, 0.4)",
-        "helios-glow": "0 0 20px rgba(245, 158, 11, 0.2), 0 0 40px rgba(245, 158, 11, 0.1)",
+        "helios": "0 0 30px rgba(201, 167, 108, 0.3)",
+        "helios-lg": "0 0 50px rgba(201, 167, 108, 0.4)",
+        "helios-glow": "0 0 20px rgba(201, 167, 108, 0.2), 0 0 40px rgba(201, 167, 108, 0.1)",
+        "dune": "0 0 30px rgba(184, 149, 106, 0.25)",
       },
       transitionDuration: {
         "400": "400ms",
