@@ -450,14 +450,14 @@ function TokenInput({
 }: TokenInputProps) {
   return (
     <div className={cn(
-      'p-4 rounded-2xl border transition-all duration-300',
-      'bg-zinc-800/30 border-white/5',
-      'hover:border-white/10 hover:bg-zinc-800/50',
-      'focus-within:border-amber-500/30 focus-within:bg-zinc-800/50',
+      'p-4 rounded-2xl border transition-all duration-200',
+      'bg-zinc-900/50 border-white/5',
+      'hover:border-white/10',
+      'focus-within:border-amber-500/30',
       highlight && 'border-amber-500/20 bg-amber-500/5'
     )}>
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-sm text-zinc-500">{label}</span>
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-xs text-zinc-500 uppercase tracking-wide">{label}</span>
         {token && (
           <button
             onClick={() => {
@@ -465,14 +465,13 @@ function TokenInput({
                 onAmountChange(formatAmount(balance, token.decimals, token.decimals))
               }
             }}
-            className="text-sm text-zinc-500 hover:text-amber-500 transition-colors flex items-center gap-1"
+            className="text-xs text-zinc-500 hover:text-amber-500 transition-colors"
           >
-            <span>Balance:</span>
-            <span className="font-mono">{formatAmount(balance, token.decimals)}</span>
+            Balance: <span className="font-mono">{formatAmount(balance, token.decimals)}</span>
           </button>
         )}
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-4">
         <input
           type="text"
           inputMode="decimal"
@@ -486,7 +485,7 @@ function TokenInput({
           }}
           readOnly={readOnly}
           className={cn(
-            'flex-1 bg-transparent text-2xl font-semibold text-white placeholder:text-zinc-600 focus:outline-none',
+            'flex-1 min-w-0 bg-transparent text-2xl font-semibold text-white placeholder:text-zinc-600 focus:outline-none',
             readOnly && 'cursor-default',
             highlight && 'text-amber-500'
           )}

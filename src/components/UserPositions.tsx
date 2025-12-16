@@ -37,7 +37,7 @@ interface PoolWithTokens {
 
 export function UserPositions() {
   const { isConnected } = useAccount()
-  const { positions, isLoading, hasPositions, refetch } = useUserPositions()
+  const { positions, isLoading, isFetching, hasPositions, refetch } = useUserPositions()
   const [selectedPosition, setSelectedPosition] = useState<UserPosition | null>(null)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false)
@@ -123,6 +123,14 @@ export function UserPositions() {
 
   return (
     <div className="space-y-6">
+      {/* Refresh indicator */}
+      {isFetching && (
+        <div className="flex items-center justify-center gap-2 py-2 text-xs text-zinc-500">
+          <RefreshCw className="h-3 w-3 animate-spin text-amber-500" />
+          <span>Refreshing positions...</span>
+        </div>
+      )}
+
       {/* Header Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div className="glass-card rounded-xl p-4">

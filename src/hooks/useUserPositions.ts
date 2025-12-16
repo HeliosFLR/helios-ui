@@ -38,13 +38,15 @@ export function useUserPositions() {
     functionName: 'getActiveId' as const,
   }))
 
-  const { data: activeIdData, isLoading: activeIdsLoading, refetch: refetchActiveIds } = useReadContracts({
+  const { data: activeIdData, isLoading: activeIdsLoading, isFetching: activeIdsFetching, refetch: refetchActiveIds } = useReadContracts({
     contracts: activeIdContracts,
     query: {
-      refetchInterval: 30000, // Refresh every 15 seconds
-      retry: 3, // Retry failed requests up to 3 times
-      retryDelay: 1000, // Wait 1 second between retries
-      staleTime: 20000, // Consider data fresh for 10 seconds
+      refetchInterval: 15000, // Refresh every 15 seconds
+      retry: 3,
+      retryDelay: 1000,
+      staleTime: 10000, // Consider data fresh for 10 seconds
+      gcTime: 1000 * 60 * 5, // Keep in cache for 5 minutes
+      refetchOnWindowFocus: false, // Don't refetch on focus (causes flicker)
     },
   })
 
@@ -120,25 +122,29 @@ export function useUserPositions() {
     return queries
   }, [activeIdData])
 
-  const { data: balanceData, isLoading: balancesLoading, refetch: refetchBalances } = useReadContracts({
+  const { data: balanceData, isLoading: balancesLoading, isFetching: balancesFetching, refetch: refetchBalances } = useReadContracts({
     contracts: balanceQueries,
     query: {
       enabled: balanceQueries.length > 0 && isConnected,
-      refetchInterval: 30000,
+      refetchInterval: 15000,
       retry: 3,
       retryDelay: 1000,
-      staleTime: 20000,
+      staleTime: 10000,
+      gcTime: 1000 * 60 * 5, // Keep in cache for 5 minutes
+      refetchOnWindowFocus: false,
     },
   })
 
-  const { data: supplyData, isLoading: suppliesLoading, refetch: refetchSupplies } = useReadContracts({
+  const { data: supplyData, isLoading: suppliesLoading, isFetching: suppliesFetching, refetch: refetchSupplies } = useReadContracts({
     contracts: supplyQueries,
     query: {
       enabled: supplyQueries.length > 0,
-      refetchInterval: 30000,
+      refetchInterval: 15000,
       retry: 3,
       retryDelay: 1000,
-      staleTime: 20000,
+      staleTime: 10000,
+      gcTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
     },
   })
 
@@ -201,9 +207,15 @@ export function useUserPositions() {
     return result
   }, [activeIdData, balanceData, supplyData, queryMeta])
 
+  // isLoading = first load (no data yet)
+  // isFetching = any fetch in progress (including refetch)
+  const isLoading = activeIdsLoading || balancesLoading || suppliesLoading
+  const isFetching = activeIdsFetching || balancesFetching || suppliesFetching
+
   return {
     positions,
-    isLoading: activeIdsLoading || balancesLoading || suppliesLoading,
+    isLoading: isLoading && positions.length === 0, // Only show loading state on first load
+    isFetching, // True when refreshing in background
     hasPositions: positions.length > 0,
     refetch,
   }

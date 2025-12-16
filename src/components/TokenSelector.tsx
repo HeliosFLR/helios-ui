@@ -138,20 +138,19 @@ export function TokenSelector({ selectedToken, onSelect, excludeToken, tokenList
         type="button"
         onClick={() => setIsOpen(true)}
         className={cn(
-          'flex items-center gap-2 px-3 py-2 rounded-xl transition-all',
-          'bg-zinc-800/50 hover:bg-zinc-700/50 border border-white/5',
-          selectedToken ? 'pr-4' : 'pr-3'
+          'flex items-center gap-1.5 px-2 py-1.5 rounded-lg transition-all shrink-0',
+          'bg-zinc-800 hover:bg-zinc-700 border border-white/10 hover:border-amber-500/30',
         )}
       >
         {selectedToken ? (
           <>
-            <TokenIcon symbol={selectedToken.symbol} />
-            <span className="font-medium text-white">{selectedToken.symbol}</span>
+            <TokenIcon symbol={selectedToken.symbol} size="sm" />
+            <span className="text-sm font-medium text-white">{selectedToken.symbol}</span>
           </>
         ) : (
-          <span className="text-zinc-400">Select token</span>
+          <span className="text-sm text-zinc-400">Select</span>
         )}
-        <ChevronDown className="h-4 w-4 text-zinc-500" />
+        <ChevronDown className="h-3.5 w-3.5 text-zinc-500" />
       </button>
 
       {/* Modal */}
