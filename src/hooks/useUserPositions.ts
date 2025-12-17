@@ -31,8 +31,9 @@ export interface BinPosition {
 }
 
 // Range of bins to check around active bin
-// Matches the maximum bin range in the add liquidity UI (25) plus buffer
-const BIN_RANGE = 15
+// Must be large enough to catch limit orders placed far from active bin
+// Limit orders can be 50+ bins away, so use 100 for safety
+const BIN_RANGE = 100
 
 export function useUserPositions() {
   const { address, isConnected } = useAccount()
