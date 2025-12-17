@@ -31,9 +31,9 @@ export interface BinPosition {
 }
 
 // Range of bins to check around active bin
-// Must be large enough to catch limit orders placed far from active bin
-// Limit orders can be 50+ bins away, so use 100 for safety
-const BIN_RANGE = 100
+// Balance between catching limit orders and not overloading RPC
+// 30 bins = ~3% price range which covers most limit orders
+const BIN_RANGE = 30
 
 export function useUserPositions() {
   const { address, isConnected } = useAccount()
@@ -249,9 +249,6 @@ export function useUserPositions() {
     // Build result array - separate contiguous bin groups from isolated bins (limit orders)
     const result: UserPosition[] = []
 
-    // Debug: Log all bins found
-    console.log('[useUserPositions] Found bins by pool:', Object.fromEntries(poolBins))
-
     poolBins.forEach((bins, poolIndex) => {
       const pool = POOLS[poolIndex]
       const activeId = activeIdData[poolIndex]?.result as number | undefined
@@ -283,12 +280,6 @@ export function useUserPositions() {
       if (currentGroup.length > 0) {
         groups.push(currentGroup)
       }
-
-      // Debug: Log groups for this pool
-      console.log(`[useUserPositions] Pool ${poolIndex} (${pool.tokenX.symbol}/${pool.tokenY.symbol}):`, {
-        totalBins: sortedBins.length,
-        groups: groups.map(g => ({ binIds: g.map(b => b.binId), count: g.length }))
-      })
 
       // Create a position for each group
       for (const groupBins of groups) {

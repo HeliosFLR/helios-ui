@@ -35,9 +35,9 @@ export const coston2 = defineChain({
   rpcUrls: {
     default: {
       http: [
-        'https://coston2-api.flare.network/ext/C/rpc',
-        'https://coston2.enosys.global/ext/C/rpc',
         'https://rpc.ankr.com/flare_coston2',
+        'https://coston2.enosys.global/ext/C/rpc',
+        'https://coston2-api.flare.network/ext/C/rpc',
       ],
     },
   },
