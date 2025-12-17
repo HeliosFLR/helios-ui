@@ -21,9 +21,9 @@ export function LimitOrderCard() {
   const { pools, isLoading: poolsLoading } = usePoolsData()
 
   const [orderSide, setOrderSide] = useState<OrderSide>('buy')
-  // Default to USDC/USDT pair (the working pool)
-  const [tokenIn, setTokenIn] = useState<Token | null>(SWAP_TOKENS[1]) // USDT for buy
-  const [tokenOut, setTokenOut] = useState<Token | null>(SWAP_TOKENS[0]) // USDC for buy
+  // Default to WC2FLR/USDT0 pair (main trading pool)
+  const [tokenIn, setTokenIn] = useState<Token | null>(SWAP_TOKENS.find(t => t.symbol === 'USDT0') || SWAP_TOKENS[2])
+  const [tokenOut, setTokenOut] = useState<Token | null>(SWAP_TOKENS.find(t => t.symbol === 'WC2FLR') || SWAP_TOKENS[1])
   const [amount, setAmount] = useState('')
   const [limitPrice, setLimitPrice] = useState('')
   const [pricePercentage, setPricePercentage] = useState(0) // % above/below current price
