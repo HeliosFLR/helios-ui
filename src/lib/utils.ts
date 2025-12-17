@@ -42,8 +42,12 @@ export function formatUSD(amount: number): string {
 }
 
 export function calculatePriceFromBinId(binId: number, binStep: number, decimalsX: number, decimalsY: number): number {
+  // Price formula: (1 + binStep/10000)^(binId - 2^23)
+  // This gives Y per X in smallest units
+  // To convert to human-readable (Y_human per X_human):
+  // multiply by 10^(decimalsX - decimalsY)
   const base = 1 + binStep / 10000
   const rawPrice = Math.pow(base, binId - 8388608)
-  const decimalAdjustment = Math.pow(10, decimalsY - decimalsX)
+  const decimalAdjustment = Math.pow(10, decimalsX - decimalsY)
   return rawPrice * decimalAdjustment
 }
