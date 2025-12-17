@@ -6,9 +6,10 @@ import { ArrowDownUp, Loader2, AlertCircle, CheckCircle2, Flame, Sparkles, Setti
 import { TokenSelector, TokenIcon } from './TokenSelector'
 import { useTokenBalance, useTokenAllowance } from '@/hooks/useTokenBalance'
 import { useSwap, useApprove } from '@/hooks/useSwap'
+import { useWrap } from '@/hooks/useWrap'
 import { useSwapQuote, calculateFallbackQuote } from '@/hooks/useQuote'
 import { findBestPool } from '@/hooks/usePoolData'
-import { CONTRACTS, type Token, SWAP_TOKENS } from '@/config/contracts'
+import { CONTRACTS, type Token, SWAP_TOKENS, NATIVE_TOKEN_ADDRESS, WNAT_ADDRESS } from '@/config/contracts'
 import { formatAmount, parseAmount, cn } from '@/lib/utils'
 import { useXP } from './GamificationBar'
 
@@ -36,7 +37,18 @@ export function SwapCard() {
   )
 
   const { swap, isPending: isSwapping, isConfirming, isSuccess: swapSuccess, error: swapError } = useSwap()
+  const { wrap, unwrap, isPending: isWrapping, isConfirming: isWrapConfirming, isSuccess: wrapSuccess, error: wrapError } = useWrap()
   const { approve, isPending: isApproving, isConfirming: isApproveConfirming, isSuccess: approveSuccess } = useApprove()
+
+  // Check if this is a wrap/unwrap operation (C2FLR <-> WC2FLR)
+  const isWrapOperation = tokenIn && tokenOut && (
+    (tokenIn.address.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase() &&
+     tokenOut.address.toLowerCase() === WNAT_ADDRESS.toLowerCase()) ||
+    (tokenIn.address.toLowerCase() === WNAT_ADDRESS.toLowerCase() &&
+     tokenOut.address.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase())
+  )
+  const isWrappingNative = isWrapOperation && tokenIn?.address.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase()
+  const isUnwrappingNative = isWrapOperation && tokenIn?.address.toLowerCase() === WNAT_ADDRESS.toLowerCase()
 
   const pool = tokenIn && tokenOut ? findBestPool(tokenIn.address, tokenOut.address) : undefined
   const parsedAmountIn = tokenIn ? parseAmount(amountIn, tokenIn.decimals) : BigInt(0)
@@ -70,6 +82,12 @@ export function SwapCard() {
       return
     }
 
+    // For wrap/unwrap operations, use 1:1 ratio
+    if (isWrapOperation) {
+      setAmountOut(amountIn)
+      return
+    }
+
     // Use real quote if available (works for both direct and multi-hop)
     if (quotedAmountOut > BigInt(0)) {
       const formattedOut = formatAmount(quotedAmountOut, tokenOut.decimals, tokenOut.decimals)
@@ -88,7 +106,7 @@ export function SwapCard() {
       )
       setAmountOut(fallbackOut.toFixed(tokenOut.decimals === 6 ? 6 : 4))
     }
-  }, [amountIn, tokenIn, tokenOut, hasRoute, quotedAmountOut, isQuoteLoading, quoteError])
+  }, [amountIn, tokenIn, tokenOut, hasRoute, quotedAmountOut, isQuoteLoading, quoteError, isWrapOperation])
 
   // Refetch allowance after approval
   useEffect(() => {
@@ -97,21 +115,23 @@ export function SwapCard() {
     }
   }, [approveSuccess, refetchAllowance])
 
-  // Handle swap success - simplified animation
+  // Handle swap/wrap success - simplified animation
   useEffect(() => {
-    if (swapSuccess && !showSuccessAnimation) {
+    if ((swapSuccess || wrapSuccess) && !showSuccessAnimation) {
       setShowSuccessAnimation(true)
 
-      // Record XP for the swap
-      const estimateUSDValue = () => {
-        const amount = parseFloat(amountIn) || 0
-        if (!tokenIn) return amount
-        if (tokenIn.symbol === 'USDT' || tokenIn.symbol === 'USDC') return amount
-        if (tokenIn.symbol === 'WFLR' || tokenIn.symbol === 'sFLR') return amount * 0.02
-        return amount
+      // Record XP for the swap (not for wrap/unwrap)
+      if (!isWrapOperation) {
+        const estimateUSDValue = () => {
+          const amount = parseFloat(amountIn) || 0
+          if (!tokenIn) return amount
+          if (tokenIn.symbol === 'USDT' || tokenIn.symbol === 'USDC') return amount
+          if (tokenIn.symbol === 'WFLR' || tokenIn.symbol === 'sFLR') return amount * 0.02
+          return amount
+        }
+        const result = recordSwapXP(estimateUSDValue())
+        setXpEarned(result.xpEarned)
       }
-      const result = recordSwapXP(estimateUSDValue())
-      setXpEarned(result.xpEarned)
 
       // Refetch balances
       refetchBalanceIn()
@@ -126,7 +146,7 @@ export function SwapCard() {
         setXpEarned(0)
       }, 1500)
     }
-  }, [swapSuccess]) // Minimal dependencies to prevent re-triggering
+  }, [swapSuccess, wrapSuccess]) // Minimal dependencies to prevent re-triggering
 
   const handleSwapTokens = () => {
     setIsSwapAnimating(true)
@@ -144,7 +164,23 @@ export function SwapCard() {
     await approve(tokenIn.address, CONTRACTS.LB_ROUTER, parsedAmountIn)
   }
 
+  const handleWrap = async () => {
+    if (!tokenIn || !tokenOut) return
+
+    if (isWrappingNative) {
+      await wrap(parsedAmountIn)
+    } else if (isUnwrappingNative) {
+      await unwrap(parsedAmountIn)
+    }
+  }
+
   const handleSwap = async () => {
+    // For wrap/unwrap operations, use the wrap handler
+    if (isWrapOperation) {
+      await handleWrap()
+      return
+    }
+
     if (!tokenIn || !tokenOut || !hasRoute || routeBinSteps.length === 0) return
 
     const minAmountOut = tokenOut
@@ -242,8 +278,28 @@ export function SwapCard() {
           />
         </div>
 
-        {/* Route Info */}
-        {hasRoute && amountIn && (
+        {/* Wrap/Unwrap Info */}
+        {isWrapOperation && amountIn && (
+          <div className="mt-4 p-4 rounded-2xl bg-zinc-800/30 border border-white/5 space-y-3 animate-float-up">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-zinc-500">Operation</span>
+              <span className="text-dune-400 font-medium">
+                {isWrappingNative ? 'Wrap C2FLR → WC2FLR' : 'Unwrap WC2FLR → C2FLR'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-zinc-500">Rate</span>
+              <span className="text-zinc-300 font-medium">1:1 (No fees)</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-zinc-500">You receive</span>
+              <span className="text-zinc-300 font-mono">{amountIn} {tokenOut?.symbol}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Route Info (for non-wrap operations) */}
+        {hasRoute && amountIn && !isWrapOperation && (
           <div className="mt-4 p-4 rounded-2xl bg-zinc-800/30 border border-white/5 space-y-3 animate-float-up">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
@@ -343,11 +399,11 @@ export function SwapCard() {
               <AlertCircle className="h-5 w-5" />
               Insufficient {tokenIn.symbol} balance
             </div>
-          ) : !hasRoute ? (
+          ) : !hasRoute && !isWrapOperation ? (
             <div className="w-full py-4 px-6 rounded-2xl bg-zinc-800/50 border border-white/5 text-zinc-500 text-center font-medium">
               No route found for this pair
             </div>
-          ) : needsApproval ? (
+          ) : needsApproval && !isWrapOperation ? (
             <button
               onClick={handleApprove}
               disabled={isApproving || isApproveConfirming}
@@ -365,18 +421,18 @@ export function SwapCard() {
           ) : (
             <button
               onClick={handleSwap}
-              disabled={isSwapping || isConfirming}
+              disabled={isSwapping || isConfirming || isWrapping || isWrapConfirming}
               className="btn-helios w-full"
             >
-              {isSwapping || isConfirming ? (
+              {isSwapping || isConfirming || isWrapping || isWrapConfirming ? (
                 <span className="flex items-center justify-center gap-2">
                   <Loader2 className="h-5 w-5 animate-spin" />
-                  {isConfirming ? 'Confirming...' : 'Swapping...'}
+                  {isConfirming || isWrapConfirming ? 'Confirming...' : isWrapOperation ? (isWrappingNative ? 'Wrapping...' : 'Unwrapping...') : 'Swapping...'}
                 </span>
               ) : (
                 <span className="flex items-center justify-center gap-2">
                   <Flame className="h-5 w-5" />
-                  Swap
+                  {isWrapOperation ? (isWrappingNative ? 'Wrap' : 'Unwrap') : 'Swap'}
                 </span>
               )}
             </button>
@@ -387,28 +443,30 @@ export function SwapCard() {
         {showSuccessAnimation && (
           <div className="mt-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2">
             <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
-            <span className="text-emerald-400 text-sm font-medium">Swap successful!</span>
+            <span className="text-emerald-400 text-sm font-medium">
+              {isWrapOperation ? (isWrappingNative ? 'Wrap successful!' : 'Unwrap successful!') : 'Swap successful!'}
+            </span>
             {xpEarned > 0 && (
               <span className="ml-auto text-dune-400 text-sm font-medium">+{xpEarned} XP</span>
             )}
           </div>
         )}
 
-        {swapError && !showSuccessAnimation && (
+        {(swapError || wrapError) && !showSuccessAnimation && (
           <div className="mt-4 p-4 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center gap-3">
             <div className="p-2 rounded-xl bg-red-500/20">
               <AlertCircle className="h-6 w-6 text-red-500" />
             </div>
             <div>
-              <p className="text-red-400 font-semibold">Swap failed</p>
+              <p className="text-red-400 font-semibold">{isWrapOperation ? 'Wrap failed' : 'Swap failed'}</p>
               <p className="text-red-500/70 text-sm">
-                {swapError.message?.includes('LBRouter__InsufficientAmountOut')
+                {(swapError || wrapError)?.message?.includes('LBRouter__InsufficientAmountOut')
                   ? 'Insufficient liquidity in pool. Try a smaller amount.'
-                  : swapError.message?.includes('rejected')
+                  : (swapError || wrapError)?.message?.includes('rejected')
                     ? 'Transaction rejected by user'
-                    : swapError.message?.includes('LBPair__OutOfLiquidity')
+                    : (swapError || wrapError)?.message?.includes('LBPair__OutOfLiquidity')
                       ? 'No liquidity available. Add liquidity to the pool first.'
-                      : 'Transaction failed. Pool may have insufficient liquidity.'}
+                      : 'Transaction failed. Please try again.'}
               </p>
             </div>
           </div>

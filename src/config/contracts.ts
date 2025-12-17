@@ -137,25 +137,32 @@ export interface Pool {
 // Testnet pools - Coston2 deployed pools
 const TESTNET_POOLS: Pool[] = [
   {
-    // WC2FLR/USDT0 pool - main trading pool
+    // WC2FLR/USDT0 pool - main trading pool (official Coston2 tokens)
     address: '0x081D1B7FB116081E33fB8CE4bC1b67e1beC8fC5b',
     tokenX: TESTNET_ALL_TOKENS[0], // WC2FLR
     tokenY: TESTNET_ALL_TOKENS[1], // USDT0
     binStep: 10,
   },
   {
-    // WC2FLR/FXRP pool
+    // WC2FLR/FXRP pool (official Coston2 tokens)
     address: '0x973b97F283dc6aC10b3b8ba3289dc55494f86540',
     tokenX: TESTNET_ALL_TOKENS[0], // WC2FLR
     tokenY: TESTNET_ALL_TOKENS[2], // FXRP
     binStep: 10,
   },
   {
-    // FXRP/USDT0 pool
+    // FXRP/USDT0 pool (official Coston2 tokens)
     address: '0x63865F25f55aC6D2A35eB1Ad16E9Cbd14Ed335A9',
     tokenX: TESTNET_ALL_TOKENS[2], // FXRP
     tokenY: TESTNET_ALL_TOKENS[1], // USDT0
     binStep: 10,
+  },
+  {
+    // Mock USDC/USDT pool - stablecoin pair
+    address: '0x7ceC6A917f881F2916C6243c48D9c43ff5594459',
+    tokenX: TESTNET_ALL_TOKENS[4], // Mock USDC
+    tokenY: TESTNET_ALL_TOKENS[3], // Mock USDT
+    binStep: 15,
   },
 ]
 
