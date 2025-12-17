@@ -246,7 +246,7 @@ export function useUserPositions() {
       }
     })
 
-    // Build result array
+    // Build result array - separate contiguous bin groups from isolated bins (limit orders)
     const result: UserPosition[] = []
 
     poolBins.forEach((bins, poolIndex) => {
@@ -254,22 +254,52 @@ export function useUserPositions() {
       const activeId = activeIdData[poolIndex]?.result as number | undefined
       if (!pool || !activeId) return
 
-      const totalLiquidity = bins.reduce((sum, bin) => sum + bin.liquidity, BigInt(0))
-      const totalAmountX = bins.reduce((sum, bin) => sum + bin.amountX, BigInt(0))
-      const totalAmountY = bins.reduce((sum, bin) => sum + bin.amountY, BigInt(0))
+      // Sort bins by binId
+      const sortedBins = bins.sort((a, b) => a.binId - b.binId)
 
-      result.push({
-        pool,
-        poolAddress: pool.address,
-        tokenX: pool.tokenX,
-        tokenY: pool.tokenY,
-        binStep: pool.binStep,
-        bins: bins.sort((a, b) => a.binId - b.binId),
-        totalLiquidity,
-        activeId,
-        totalAmountX,
-        totalAmountY,
-      })
+      // Group bins into contiguous ranges
+      // A bin is contiguous if it's within 3 bins of the previous one (allows small gaps)
+      const groups: BinPosition[][] = []
+      let currentGroup: BinPosition[] = []
+
+      for (const bin of sortedBins) {
+        if (currentGroup.length === 0) {
+          currentGroup.push(bin)
+        } else {
+          const lastBin = currentGroup[currentGroup.length - 1]
+          // If within 3 bins of the last one, it's part of the same group
+          if (bin.binId - lastBin.binId <= 3) {
+            currentGroup.push(bin)
+          } else {
+            // Start a new group
+            groups.push(currentGroup)
+            currentGroup = [bin]
+          }
+        }
+      }
+      if (currentGroup.length > 0) {
+        groups.push(currentGroup)
+      }
+
+      // Create a position for each group
+      for (const groupBins of groups) {
+        const totalLiquidity = groupBins.reduce((sum, bin) => sum + bin.liquidity, BigInt(0))
+        const totalAmountX = groupBins.reduce((sum, bin) => sum + bin.amountX, BigInt(0))
+        const totalAmountY = groupBins.reduce((sum, bin) => sum + bin.amountY, BigInt(0))
+
+        result.push({
+          pool,
+          poolAddress: pool.address,
+          tokenX: pool.tokenX,
+          tokenY: pool.tokenY,
+          binStep: pool.binStep,
+          bins: groupBins,
+          totalLiquidity,
+          activeId,
+          totalAmountX,
+          totalAmountY,
+        })
+      }
     })
 
     return result
