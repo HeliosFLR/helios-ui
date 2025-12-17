@@ -7,7 +7,10 @@ import { TokenSelector, TokenIcon } from './TokenSelector'
 import { useTokenBalance, useTokenAllowance } from '@/hooks/useTokenBalance'
 import { useApprove } from '@/hooks/useSwap'
 import { usePoolsData } from '@/hooks/usePoolData'
-import { CONTRACTS, type Token, SWAP_TOKENS } from '@/config/contracts'
+import { CONTRACTS, type Token, SWAP_TOKENS, NATIVE_TOKEN_ADDRESS } from '@/config/contracts'
+
+// Filter out native tokens for limit orders (they require ERC20 for addLiquidity)
+const LIMIT_ORDER_TOKENS = SWAP_TOKENS.filter(t => t.address.toLowerCase() !== NATIVE_TOKEN_ADDRESS.toLowerCase())
 import { formatAmount, parseAmount, calculatePriceFromBinId, cn } from '@/lib/utils'
 import { LB_ROUTER_ABI } from '@/contracts/abis'
 import { useToast } from './Toast'
@@ -22,8 +25,8 @@ export function LimitOrderCard() {
 
   const [orderSide, setOrderSide] = useState<OrderSide>('buy')
   // Default to WC2FLR/USDT0 pair (main trading pool)
-  const [tokenIn, setTokenIn] = useState<Token | null>(SWAP_TOKENS.find(t => t.symbol === 'USDT0') || SWAP_TOKENS[2])
-  const [tokenOut, setTokenOut] = useState<Token | null>(SWAP_TOKENS.find(t => t.symbol === 'WC2FLR') || SWAP_TOKENS[1])
+  const [tokenIn, setTokenIn] = useState<Token | null>(LIMIT_ORDER_TOKENS.find(t => t.symbol === 'USDT0') || LIMIT_ORDER_TOKENS[1])
+  const [tokenOut, setTokenOut] = useState<Token | null>(LIMIT_ORDER_TOKENS.find(t => t.symbol === 'WC2FLR') || LIMIT_ORDER_TOKENS[0])
   const [amount, setAmount] = useState('')
   const [limitPrice, setLimitPrice] = useState('')
   const [pricePercentage, setPricePercentage] = useState(0) // % above/below current price
@@ -283,7 +286,7 @@ export function LimitOrderCard() {
               selectedToken={tokenIn}
               onSelect={setTokenIn}
               excludeToken={tokenOut}
-              tokenList={SWAP_TOKENS}
+              tokenList={LIMIT_ORDER_TOKENS}
             />
           </div>
         </div>
