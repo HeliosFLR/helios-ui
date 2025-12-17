@@ -1,8 +1,13 @@
 'use client'
 
 import { useReadContract } from 'wagmi'
-import { POOLS, TOKENS, getTokenByAddress } from '@/config/contracts'
+import { POOLS, TOKENS, getTokenByAddress, NATIVE_TOKEN_ADDRESS, WNAT_ADDRESS } from '@/config/contracts'
 import { LB_PAIR_ABI } from '@/contracts/abis'
+
+// Helper to convert native token address to WNAT for pool lookups
+function normalizeTokenAddress(address: `0x${string}`): `0x${string}` {
+  return address.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase() ? WNAT_ADDRESS : address
+}
 
 interface QuoteResult {
   amountOut: bigint
@@ -31,8 +36,11 @@ function findAllRoutes(
   maxHops: number = 3
 ): Route[] {
   const routes: Route[] = []
-  const tokenInLower = tokenIn.toLowerCase()
-  const tokenOutLower = tokenOut.toLowerCase()
+  // Normalize addresses to handle native token
+  const normalizedIn = normalizeTokenAddress(tokenIn)
+  const normalizedOut = normalizeTokenAddress(tokenOut)
+  const tokenInLower = normalizedIn.toLowerCase()
+  const tokenOutLower = normalizedOut.toLowerCase()
 
   // Direct route
   const directPool = POOLS.find(p =>
@@ -43,11 +51,11 @@ function findAllRoutes(
   )
 
   if (directPool) {
-    const tokenInData = getTokenByAddress(tokenIn)
-    const tokenOutData = getTokenByAddress(tokenOut)
+    const tokenInData = getTokenByAddress(tokenIn) || getTokenByAddress(normalizedIn)
+    const tokenOutData = getTokenByAddress(tokenOut) || getTokenByAddress(normalizedOut)
     const swapForY = directPool.tokenX.address.toLowerCase() === tokenInLower
     routes.push({
-      path: [tokenIn, tokenOut],
+      path: [normalizedIn, normalizedOut], // Use normalized (WNAT) addresses for the path
       binSteps: [BigInt(directPool.binStep)],
       versions: [3], // V2_2
       tokenSymbols: [tokenInData?.symbol || '', tokenOutData?.symbol || ''],

@@ -22,6 +22,20 @@ export interface Token {
   name: string
   decimals: number
   logoUrl?: string
+  isNative?: boolean
+}
+
+// Native token address (used to represent native C2FLR/FLR)
+export const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
+
+// Native C2FLR token (testnet)
+const NATIVE_C2FLR: Token = {
+  address: NATIVE_TOKEN_ADDRESS,
+  symbol: 'C2FLR',
+  name: 'Coston2 Flare',
+  decimals: 18,
+  logoUrl: '/tokens/wflr.png',
+  isNative: true,
 }
 
 // All testnet tokens (for faucet, pools display, positions)
@@ -65,9 +79,12 @@ const TESTNET_ALL_TOKENS: Token[] = [
 
 // Tokens available for swapping
 const TESTNET_SWAP_TOKENS: Token[] = [
+  NATIVE_C2FLR,           // Native C2FLR
   TESTNET_ALL_TOKENS[0], // WC2FLR
-  TESTNET_ALL_TOKENS[1], // USDT0
-  TESTNET_ALL_TOKENS[2], // FXRP
+  TESTNET_ALL_TOKENS[1], // USDT0 (official Coston2)
+  TESTNET_ALL_TOKENS[2], // FXRP (official Coston2)
+  TESTNET_ALL_TOKENS[3], // Mock USDT (for old pool users)
+  TESTNET_ALL_TOKENS[4], // Mock USDC (for old pool users)
 ]
 
 // Legacy export - use ALL_TOKENS for general token list

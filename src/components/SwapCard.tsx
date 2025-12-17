@@ -15,9 +15,9 @@ import { useXP } from './GamificationBar'
 
 export function SwapCard() {
   const { isConnected } = useAccount()
-  // Default to USDC -> USDT (the only working swap pair on testnet)
-  const [tokenIn, setTokenIn] = useState<Token | null>(SWAP_TOKENS.find(t => t.symbol === 'USDC') || SWAP_TOKENS[0])
-  const [tokenOut, setTokenOut] = useState<Token | null>(SWAP_TOKENS.find(t => t.symbol === 'USDT') || SWAP_TOKENS[1])
+  // Default to C2FLR -> USDT0 (main trading pair on Coston2)
+  const [tokenIn, setTokenIn] = useState<Token | null>(SWAP_TOKENS.find(t => t.symbol === 'C2FLR') || SWAP_TOKENS[0])
+  const [tokenOut, setTokenOut] = useState<Token | null>(SWAP_TOKENS.find(t => t.symbol === 'USDT0') || SWAP_TOKENS[2])
   const [amountIn, setAmountIn] = useState('')
   const [amountOut, setAmountOut] = useState('')
   const [slippage, setSlippage] = useState(5) // Higher default for testnet
@@ -178,11 +178,6 @@ export function SwapCard() {
       >
         {/* Animated border on hover */}
         <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-dune-400/0 via-dune-400/10 to-dune-400/0 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-        {/* Testnet Notice */}
-        <div className="mb-4 p-3 rounded-xl bg-dune-400/10 border border-dune-400/20 text-xs text-dune-400/80">
-          <span className="font-medium">Testnet:</span> Only USDC/USDT swaps available. Other pools coming soon.
-        </div>
 
         {/* Header */}
         <div className="flex items-center justify-between mb-6">

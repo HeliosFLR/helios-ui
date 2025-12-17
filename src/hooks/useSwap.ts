@@ -2,7 +2,7 @@
 
 import { useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi'
 import { LB_ROUTER_ABI, ERC20_ABI } from '@/contracts/abis'
-import { CONTRACTS } from '@/config/contracts'
+import { CONTRACTS, NATIVE_TOKEN_ADDRESS, WNAT_ADDRESS } from '@/config/contracts'
 
 import { getBestSwapRoute } from './useQuote'
 
@@ -29,46 +29,52 @@ export function useSwap() {
 
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600)
 
+    // Check if dealing with native token
+    const isNativeIn = tokenIn.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase()
+    const isNativeOut = tokenOut.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase()
+
+    // Replace native token address with WNAT for route building
+    const actualTokenIn = isNativeIn ? WNAT_ADDRESS : tokenIn
+    const actualTokenOut = isNativeOut ? WNAT_ADDRESS : tokenOut
+
     // Get the best route (supports multi-hop)
-    const route = getBestSwapRoute(tokenIn, tokenOut)
+    const route = getBestSwapRoute(actualTokenIn, actualTokenOut)
 
-    
+    // Build path struct
+    const path = route ? {
+      pairBinSteps: route.binSteps,
+      versions: route.versions,
+      tokenPath: route.path,
+    } : {
+      pairBinSteps: [BigInt(binStep)],
+      versions: [3], // V2_2
+      tokenPath: [actualTokenIn, actualTokenOut],
+    }
 
-    if (route) {
-      // Use the found route (could be direct or multi-hop)
+    if (isNativeIn) {
+      // Swap native token for tokens
       writeContract({
         address: CONTRACTS.LB_ROUTER,
         abi: LB_ROUTER_ABI,
-        functionName: 'swapExactTokensForTokens',
-        args: [
-          amountIn,
-          amountOutMin,
-          {
-            pairBinSteps: route.binSteps,
-            versions: route.versions,
-            tokenPath: route.path,
-          },
-          address,
-          deadline,
-        ],
+        functionName: 'swapExactNATIVEForTokens',
+        args: [amountOutMin, path, address, deadline],
+        value: amountIn,
+      })
+    } else if (isNativeOut) {
+      // Swap tokens for native token
+      writeContract({
+        address: CONTRACTS.LB_ROUTER,
+        abi: LB_ROUTER_ABI,
+        functionName: 'swapExactTokensForNATIVE',
+        args: [amountIn, amountOutMin, path, address, deadline],
       })
     } else {
-      // Fallback to direct route
+      // Standard token to token swap
       writeContract({
         address: CONTRACTS.LB_ROUTER,
         abi: LB_ROUTER_ABI,
         functionName: 'swapExactTokensForTokens',
-        args: [
-          amountIn,
-          amountOutMin,
-          {
-            pairBinSteps: [BigInt(binStep)],
-            versions: [3], // V2_2
-            tokenPath: [tokenIn, tokenOut],
-          },
-          address,
-          deadline,
-        ],
+        args: [amountIn, amountOutMin, path, address, deadline],
       })
     }
   }
