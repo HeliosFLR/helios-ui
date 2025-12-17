@@ -143,12 +143,7 @@ export function LimitOrderCard() {
     if (isSuccess) {
       toast.success(
         'Limit Order Placed!',
-        <span>
-          Your {orderSide} order has been placed.{' '}
-          <a href="/positions" className="underline text-dune-400 hover:text-dune-300">
-            View in My Positions
-          </a>
-        </span>,
+        `Your ${orderSide} order has been placed. View it in My Positions.`,
         hash
       )
       setAmount('')
