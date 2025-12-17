@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useAccount } from 'wagmi'
-import { ExternalLink, Droplets, TrendingUp, Plus, ChevronDown, ChevronUp, Flame, Sparkles, BarChart3, Waves, Gift } from 'lucide-react'
+import { ExternalLink, Droplets, TrendingUp, Plus, ChevronDown, ChevronUp, Flame, Sparkles, BarChart3, Waves, Gift, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import { usePoolsData } from '@/hooks/usePoolData'
 import { TokenIcon } from './TokenSelector'
 import { AddLiquidityModal } from './AddLiquidityModal'
@@ -44,16 +44,16 @@ export function PoolsView() {
       {/* Hero Header */}
       <div className="relative mb-10">
         {/* Background Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-radial from-amber-500/10 via-orange-500/5 to-transparent blur-3xl -z-10" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-radial from-dune-400/10 via-dune-500/5 to-transparent blur-3xl -z-10" />
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <div className="p-2.5 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500">
+              <div className="p-2.5 rounded-2xl bg-gradient-to-br from-dune-400 to-dune-500">
                 <Waves className="h-6 w-6 text-black" />
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold text-white">
-                Liquidity <span className="text-amber-500">Pools</span>
+                Liquidity <span className="text-dune-400">Pools</span>
               </h1>
             </div>
             <p className="text-zinc-500 max-w-md">
@@ -95,11 +95,11 @@ export function PoolsView() {
       <div className="glass-card rounded-3xl overflow-hidden">
         <div className="p-6 border-b border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Flame className="h-5 w-5 text-amber-500 animate-fire-flicker" />
+            <Flame className="h-5 w-5 text-dune-400 animate-fire-flicker" />
             <h2 className="text-lg font-semibold text-white">Active Pools</h2>
           </div>
           <div className="flex items-center gap-2 text-sm text-zinc-500">
-            <Sparkles className="h-4 w-4 text-amber-500" />
+            <Sparkles className="h-4 w-4 text-dune-400" />
             {pools.length} pools available
           </div>
         </div>
@@ -108,8 +108,8 @@ export function PoolsView() {
           <div className="p-16 text-center">
             <div className="inline-flex items-center justify-center">
               <div className="relative">
-                <div className="h-12 w-12 rounded-full border-4 border-amber-500/20" />
-                <div className="absolute inset-0 h-12 w-12 rounded-full border-4 border-amber-500 border-t-transparent animate-spin" />
+                <div className="h-12 w-12 rounded-full border-4 border-dune-400/20" />
+                <div className="absolute inset-0 h-12 w-12 rounded-full border-4 border-dune-400 border-t-transparent animate-spin" />
               </div>
             </div>
             <p className="mt-6 text-zinc-500">Loading pools...</p>
@@ -180,7 +180,7 @@ function StatCard({
   return (
     <div className="glass-card glass-card-hover rounded-2xl p-5 group">
       <div className="flex items-center justify-between mb-4">
-        <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-amber-500 group-hover:scale-110 transition-transform duration-300">
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-dune-400/20 to-dune-500/20 text-dune-400 group-hover:scale-110 transition-transform duration-300">
           {icon}
         </div>
         {change && (
@@ -222,6 +222,9 @@ function PoolRow({ pool, index, onAddLiquidity, onRemoveLiquidity }: PoolRowProp
 
   const feePercent = pool.binStep / 100
 
+  // Check for decimal mismatch - these pools have known swap/rebalance issues
+  const hasDecimalMismatch = pool.tokenX.decimals !== pool.tokenY.decimals
+
   return (
     <div
       className="group animate-float-up"
@@ -241,20 +244,31 @@ function PoolRow({ pool, index, onAddLiquidity, onRemoveLiquidity }: PoolRowProp
               <TokenIcon symbol={pool.tokenY.symbol} size="lg" />
             </div>
             {/* Glow effect on hover */}
-            <div className="absolute inset-0 bg-amber-500/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-dune-400/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
           <div className="text-left">
-            <div className="font-bold text-white group-hover:text-amber-500 transition-colors">
+            <div className="font-bold text-white group-hover:text-dune-400 transition-colors">
               {pool.tokenX.symbol}/{pool.tokenY.symbol}
             </div>
             <div className="flex items-center gap-2 text-sm flex-wrap">
-              <span className="px-2 py-0.5 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-medium">
+              <span className="px-2 py-0.5 rounded-lg bg-dune-400/10 text-dune-400 text-xs font-medium">
                 {feePercent}% fee
               </span>
               {(pool.tokenX.symbol === 'WFLR' || pool.tokenY.symbol === 'WFLR') && (
                 <span className="px-2 py-0.5 rounded-lg bg-purple-500/10 text-purple-400 text-xs font-medium flex items-center gap-1">
                   <Gift className="h-3 w-3" />
                   +Rewards
+                </span>
+              )}
+              {hasDecimalMismatch ? (
+                <span className="px-2 py-0.5 rounded-lg bg-yellow-500/10 text-yellow-500 text-xs font-medium flex items-center gap-1" title="Swaps may fail due to decimal mismatch">
+                  <AlertTriangle className="h-3 w-3" />
+                  Limited
+                </span>
+              ) : (
+                <span className="px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-medium flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3" />
+                  Active
                 </span>
               )}
             </div>
@@ -288,7 +302,7 @@ function PoolRow({ pool, index, onAddLiquidity, onRemoveLiquidity }: PoolRowProp
               {(pool.tokenX.symbol === 'WFLR' || pool.tokenY.symbol === 'WFLR') ? '8-12%' : '2-5%'}
             </div>
             <div className="flex flex-col gap-0.5 text-xs">
-              <span className="text-amber-500">{feePercent}% fees</span>
+              <span className="text-dune-400">{feePercent}% fees</span>
               {(pool.tokenX.symbol === 'WFLR' || pool.tokenY.symbol === 'WFLR') && (
                 <>
                   <span className="text-purple-400">+3-5% FTSO</span>
@@ -302,7 +316,7 @@ function PoolRow({ pool, index, onAddLiquidity, onRemoveLiquidity }: PoolRowProp
         {/* Expand Icon */}
         <div className={cn(
           'p-2 rounded-xl transition-all duration-300',
-          isExpanded ? 'bg-amber-500/10 text-amber-500' : 'text-zinc-500 group-hover:text-white'
+          isExpanded ? 'bg-dune-400/10 text-dune-400' : 'text-zinc-500 group-hover:text-white'
         )}>
           {isExpanded ? (
             <ChevronUp className="h-5 w-5" />
@@ -323,7 +337,7 @@ function PoolRow({ pool, index, onAddLiquidity, onRemoveLiquidity }: PoolRowProp
                   href={`https://coston2-explorer.flare.network/address/${pool.address}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-amber-500 hover:text-amber-400 flex items-center gap-1.5 text-sm font-mono group"
+                  className="text-dune-400 hover:text-dune-300 flex items-center gap-1.5 text-sm font-mono group"
                 >
                   {pool.address.slice(0, 6)}...{pool.address.slice(-4)}
                   <ExternalLink className="h-3.5 w-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

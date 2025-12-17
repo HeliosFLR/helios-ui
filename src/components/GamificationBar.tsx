@@ -10,6 +10,7 @@ import {
   Star,
   Award,
   Download,
+  RotateCcw,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
@@ -21,6 +22,7 @@ import {
   recordRemoveLiquidity,
   recordRebalance,
   exportXPDataForMigration,
+  clearUserXPData,
   type UserXPData,
 } from '@/lib/xp'
 
@@ -103,18 +105,18 @@ export function GamificationBar() {
           {/* Level & XP */}
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border-2 border-amber-500/30">
-                <span className="text-xl font-bold text-amber-500">{xpData.level}</span>
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-dune-400/20 to-dune-500/20 flex items-center justify-center border-2 border-dune-400/30">
+                <span className="text-xl font-bold text-dune-400">{xpData.level}</span>
               </div>
-              <div className="absolute -bottom-1 -right-1 bg-zinc-900 rounded-full px-1.5 py-0.5 border border-amber-500/30">
-                <span className="text-[10px] font-bold text-amber-400">LVL</span>
+              <div className="absolute -bottom-1 -right-1 bg-zinc-900 rounded-full px-1.5 py-0.5 border border-dune-400/30">
+                <span className="text-[10px] font-bold text-dune-300">LVL</span>
               </div>
             </div>
 
             <div className="min-w-[150px]">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-zinc-500">XP Progress</span>
-                <span className="text-xs font-medium text-amber-400">
+                <span className="text-xs font-medium text-dune-300">
                   {xpData.totalXP.toLocaleString()} / {nextLevelXP.toLocaleString()}
                 </span>
               </div>
@@ -135,7 +137,7 @@ export function GamificationBar() {
           )}>
             <Flame className={cn(
               "h-5 w-5",
-              xpData.stats.currentStreak > 0 ? "text-orange-500 animate-streak-flame" : "text-zinc-500"
+              xpData.stats.currentStreak > 0 ? "text-dune-500 animate-streak-flame" : "text-zinc-500"
             )} />
             <div>
               <div className="text-lg font-bold text-white">{xpData.stats.currentStreak}</div>
@@ -154,7 +156,7 @@ export function GamificationBar() {
             </div>
 
             <div className="text-center">
-              <div className="flex items-center gap-1 text-amber-500">
+              <div className="flex items-center gap-1 text-dune-400">
                 <Target className="h-4 w-4" />
                 <span className="text-lg font-bold">{xpData.stats.totalRebalances}</span>
               </div>
@@ -180,7 +182,7 @@ export function GamificationBar() {
                   className={cn(
                     "w-10 h-10 rounded-full flex items-center justify-center text-lg transition-all",
                     unlocked
-                      ? "bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30"
+                      ? "bg-gradient-to-br from-dune-400/20 to-dune-500/20 border border-dune-400/30"
                       : "bg-zinc-800/50 border border-zinc-700 grayscale opacity-40"
                   )}
                   title={unlocked ? `${achievement.name}: ${achievement.description}` : '???'}
@@ -198,15 +200,15 @@ export function GamificationBar() {
         <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
           <div className="animate-level-up text-center">
             <div className="relative">
-              <div className="absolute inset-0 bg-amber-500/30 rounded-full blur-3xl animate-ping" />
-              <div className="relative p-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-500">
+              <div className="absolute inset-0 bg-dune-400/30 rounded-full blur-3xl animate-ping" />
+              <div className="relative p-8 rounded-full bg-gradient-to-br from-dune-400 to-dune-500">
                 <Star className="h-16 w-16 text-white" />
               </div>
             </div>
             <div className="mt-4 text-3xl font-bold text-white glow-text">
               LEVEL UP!
             </div>
-            <div className="text-xl text-amber-400 mt-1">
+            <div className="text-xl text-dune-300 mt-1">
               Level {xpData.level}
             </div>
           </div>
@@ -216,13 +218,13 @@ export function GamificationBar() {
       {/* Achievement Notification */}
       {newAchievement && (
         <div className="fixed top-20 right-4 z-50 animate-notification-slide">
-          <div className="glass-card rounded-xl p-4 border border-amber-500/30 flex items-center gap-3">
+          <div className="glass-card rounded-xl p-4 border border-dune-400/30 flex items-center gap-3">
             <div className="text-3xl">{newAchievement.icon}</div>
             <div>
-              <div className="text-xs text-amber-400 font-medium">ACHIEVEMENT UNLOCKED</div>
+              <div className="text-xs text-dune-300 font-medium">ACHIEVEMENT UNLOCKED</div>
               <div className="text-white font-bold">{newAchievement.name}</div>
             </div>
-            <Sparkles className="h-5 w-5 text-amber-500 animate-pulse" />
+            <Sparkles className="h-5 w-5 text-dune-400 animate-pulse" />
           </div>
         </div>
       )}
@@ -259,12 +261,18 @@ export function useXP() {
     return exportXPDataForMigration(address)
   }, [address])
 
+  const resetXP = useCallback(() => {
+    if (!address) return
+    clearUserXPData(address)
+  }, [address])
+
   return {
     recordSwapXP,
     recordAddLiquidityXP,
     recordRemoveLiquidityXP,
     recordRebalanceXP,
     exportXPData: exportXPDataFn,
+    resetXP,
   }
 }
 
@@ -299,6 +307,41 @@ export function ExportXPButton() {
     >
       <Download className="h-4 w-4" />
       Export XP
+    </button>
+  )
+}
+
+// Reset XP button component
+export function ResetXPButton() {
+  const { resetXP } = useXP()
+  const { isConnected } = useAccount()
+  const [confirming, setConfirming] = useState(false)
+
+  const handleReset = () => {
+    if (!confirming) {
+      setConfirming(true)
+      return
+    }
+    resetXP()
+    setConfirming(false)
+  }
+
+  if (!isConnected) return null
+
+  return (
+    <button
+      onClick={handleReset}
+      onBlur={() => setConfirming(false)}
+      className={cn(
+        "flex items-center gap-2 px-4 py-2 rounded-xl border transition-all text-sm",
+        confirming
+          ? "bg-red-500/20 border-red-500/40 text-red-400"
+          : "bg-zinc-800/50 border-zinc-700 text-zinc-400 hover:border-zinc-600"
+      )}
+      title="Reset all XP data"
+    >
+      <RotateCcw className="h-4 w-4" />
+      {confirming ? 'Click to Confirm Reset' : 'Reset XP'}
     </button>
   )
 }

@@ -7,7 +7,7 @@ import { TokenSelector, TokenIcon } from './TokenSelector'
 import { useTokenBalance, useTokenAllowance } from '@/hooks/useTokenBalance'
 import { useApprove } from '@/hooks/useSwap'
 import { usePoolsData } from '@/hooks/usePoolData'
-import { CONTRACTS, type Token, TOKENS } from '@/config/contracts'
+import { CONTRACTS, type Token, SWAP_TOKENS } from '@/config/contracts'
 import { formatAmount, parseAmount, calculatePriceFromBinId, cn } from '@/lib/utils'
 import { LB_ROUTER_ABI } from '@/contracts/abis'
 import { useToast } from './Toast'
@@ -21,8 +21,9 @@ export function LimitOrderCard() {
   const { pools, isLoading: poolsLoading } = usePoolsData()
 
   const [orderSide, setOrderSide] = useState<OrderSide>('buy')
-  const [tokenIn, setTokenIn] = useState<Token | null>(TOKENS[1]) // USDT for buy
-  const [tokenOut, setTokenOut] = useState<Token | null>(TOKENS[0]) // WFLR for buy
+  // Default to USDC/USDT pair (the working pool)
+  const [tokenIn, setTokenIn] = useState<Token | null>(SWAP_TOKENS[1]) // USDT for buy
+  const [tokenOut, setTokenOut] = useState<Token | null>(SWAP_TOKENS[0]) // USDC for buy
   const [amount, setAmount] = useState('')
   const [limitPrice, setLimitPrice] = useState('')
   const [pricePercentage, setPricePercentage] = useState(0) // % above/below current price
@@ -55,34 +56,62 @@ export function LimitOrderCard() {
     )
   }, [pool])
 
-  // Calculate target bin ID based on limit price
+  // Determine if tokenIn is tokenX or tokenY in the pool
+  const isTokenInX = useMemo(() => {
+    if (!pool || !tokenIn) return false
+    return tokenIn.address.toLowerCase() === pool.tokenX.address.toLowerCase()
+  }, [pool, tokenIn])
+
+  // Display price in user-friendly format (what you get per what you spend)
+  // For buy: tokenOut/tokenIn, for sell: same
+  // This is the inverse of pool's native tokenY/tokenX format when buying with tokenY
+  const displayPrice = useMemo(() => {
+    if (currentPrice <= 0) return 0
+    // When isTokenInX is false, we need to invert the pool price for display
+    // Pool price is tokenY/tokenX, user expects tokenOut/tokenIn
+    return isTokenInX ? currentPrice : (currentPrice > 0 ? 1 / currentPrice : 0)
+  }, [currentPrice, isTokenInX])
+
+  // Calculate target bin ID based on limit price using proper logarithmic formula
   const targetBinId = useMemo(() => {
-    if (!pool || !limitPrice || parseFloat(limitPrice) <= 0) return 0
+    if (!pool || !limitPrice || parseFloat(limitPrice) <= 0 || currentPrice <= 0) return 0
 
-    const targetPrice = parseFloat(limitPrice)
+    const userPrice = parseFloat(limitPrice)
     const binStep = pool.binStep
+    const binStepFactor = 1 + binStep / 10000
 
-    // Calculate bins from active bin to target price
-    // Price relationship: price = (1 + binStep/10000)^(binId - 8388608)
-    // Inverse: binId = 8388608 + log(price) / log(1 + binStep/10000)
+    // User enters price in tokenOut/tokenIn format (how much output per input)
+    // Pool price is tokenY/tokenX format
+    // When !isTokenInX (tokenIn=Y, tokenOut=X): user format is inverse of pool format
+    // Convert user's limit price to pool format for calculation
+    const poolLimitPrice = isTokenInX ? userPrice : (userPrice > 0 ? 1 / userPrice : 0)
 
-    // For simplicity, use the percentage difference to estimate bins
-    if (currentPrice > 0) {
-      const priceDiff = (targetPrice / currentPrice) - 1
-      const binsToMove = Math.round(priceDiff / (binStep / 10000))
-      return pool.activeId + binsToMove
+    if (poolLimitPrice <= 0) return 0
+
+    // Calculate price ratio in pool format
+    const priceRatio = poolLimitPrice / currentPrice
+
+    // Calculate bins to move using logarithm
+    const binsToMove = Math.round(Math.log(priceRatio) / Math.log(binStepFactor))
+
+    const calculatedBinId = pool.activeId + binsToMove
+
+    // Validate bin ID is within reasonable range (prevent overflow)
+    if (calculatedBinId < 1 || calculatedBinId > 16777215) {
+      console.warn('Target bin ID out of range:', calculatedBinId)
+      return 0
     }
 
-    return pool.activeId
-  }, [pool, limitPrice, currentPrice])
+    return calculatedBinId
+  }, [pool, limitPrice, currentPrice, isTokenInX])
 
   // Update limit price when percentage changes
   useEffect(() => {
-    if (currentPrice > 0 && pricePercentage !== 0) {
-      const newPrice = currentPrice * (1 + pricePercentage / 100)
+    if (displayPrice > 0 && pricePercentage !== 0) {
+      const newPrice = displayPrice * (1 + pricePercentage / 100)
       setLimitPrice(newPrice.toFixed(6))
     }
-  }, [pricePercentage, currentPrice])
+  }, [pricePercentage, displayPrice])
 
   // Swap tokens when order side changes
   const handleSideChange = (side: OrderSide) => {
@@ -112,7 +141,16 @@ export function LimitOrderCard() {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success('Limit Order Placed!', `Your ${orderSide} order has been placed`, hash)
+      toast.success(
+        'Limit Order Placed!',
+        <span>
+          Your {orderSide} order has been placed.{' '}
+          <a href="/positions" className="underline text-dune-400 hover:text-dune-300">
+            View in My Positions
+          </a>
+        </span>,
+        hash
+      )
       setAmount('')
       setLimitPrice('')
       setPricePercentage(0)
@@ -127,7 +165,7 @@ export function LimitOrderCard() {
 
   const handleApprove = async () => {
     if (!tokenIn) return
-    await approve(tokenIn.address, CONTRACTS.LB_ROUTER, parsedAmount * BigInt(2))
+    await approve(tokenIn.address, CONTRACTS.LB_ROUTER, parsedAmount)
   }
 
   const handlePlaceOrder = async () => {
@@ -135,29 +173,37 @@ export function LimitOrderCard() {
 
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600)
 
-    // Determine if this is X or Y token based on pool
-    const isTokenX = tokenIn.address.toLowerCase() === pool.tokenX.address.toLowerCase()
-
     // Create single-bin liquidity (limit order)
     const PRECISION = BigInt(10 ** 18)
 
+    // Use the pre-calculated isTokenInX to determine which token we're providing
     const liquidityParameters = {
       tokenX: pool.tokenX.address,
       tokenY: pool.tokenY.address,
       binStep: BigInt(pool.binStep),
-      amountX: isTokenX ? parsedAmount : BigInt(0),
-      amountY: isTokenX ? BigInt(0) : parsedAmount,
+      amountX: isTokenInX ? parsedAmount : BigInt(0),
+      amountY: isTokenInX ? BigInt(0) : parsedAmount,
       amountXMin: BigInt(0),
       amountYMin: BigInt(0),
       activeIdDesired: BigInt(targetBinId),
-      idSlippage: BigInt(0), // No slippage for limit orders
+      idSlippage: BigInt(5), // Allow small slippage for bin movement
       deltaIds: [BigInt(0)], // Single bin at target
-      distributionX: isTokenX ? [PRECISION] : [BigInt(0)],
-      distributionY: isTokenX ? [BigInt(0)] : [PRECISION],
+      distributionX: isTokenInX ? [PRECISION] : [BigInt(0)],
+      distributionY: isTokenInX ? [BigInt(0)] : [PRECISION],
       to: address,
       refundTo: address,
       deadline,
     }
+
+    console.log('[LimitOrder] Placing order:', {
+      tokenIn: tokenIn.symbol,
+      tokenOut: tokenOut.symbol,
+      isTokenInX,
+      targetBinId,
+      activeId: pool.activeId,
+      binDiff: targetBinId - pool.activeId,
+      amount: parsedAmount.toString(),
+    })
 
     writeContract({
       address: CONTRACTS.LB_ROUTER,
@@ -178,7 +224,7 @@ export function LimitOrderCard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-amber-500" />
+            <Target className="h-5 w-5 text-dune-400" />
             <h2 className="text-xl font-bold text-white">Limit Order</h2>
           </div>
         </div>
@@ -220,7 +266,7 @@ export function LimitOrderCard() {
             {tokenIn && (
               <button
                 onClick={() => setAmount(formatAmount(balance, tokenIn.decimals, tokenIn.decimals))}
-                className="text-sm text-zinc-500 hover:text-amber-500"
+                className="text-sm text-zinc-500 hover:text-dune-400"
               >
                 Balance: {formatAmount(balance, tokenIn.decimals)}
               </button>
@@ -242,6 +288,7 @@ export function LimitOrderCard() {
               selectedToken={tokenIn}
               onSelect={setTokenIn}
               excludeToken={tokenOut}
+              tokenList={SWAP_TOKENS}
             />
           </div>
         </div>
@@ -253,9 +300,9 @@ export function LimitOrderCard() {
               Limit Price
               <Info className="h-3 w-3 text-zinc-600" />
             </span>
-            {currentPrice > 0 && (
+            {displayPrice > 0 && (
               <span className="text-sm text-zinc-500">
-                Current: {currentPrice.toFixed(6)}
+                Current: {displayPrice.toFixed(6)}
               </span>
             )}
           </div>
@@ -315,14 +362,37 @@ export function LimitOrderCard() {
               </span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-zinc-500">Target Bin</span>
-              <span className="text-zinc-300 font-mono">#{targetBinId}</span>
+              <span className="text-zinc-500">Trigger Price</span>
+              <span className="text-dune-400 font-mono">
+                {parseFloat(limitPrice).toFixed(6)} {tokenOut?.symbol}/{tokenIn?.symbol}
+              </span>
             </div>
-            <div className="flex items-center justify-between text-sm">
+            {targetBinId > 0 && pool && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-zinc-500">Target Bin</span>
+                <span className="text-zinc-400 font-mono text-xs">
+                  #{targetBinId} ({targetBinId > pool.activeId ? '+' : ''}{targetBinId - pool.activeId} from current)
+                </span>
+              </div>
+            )}
+            <div className="flex items-center justify-between text-sm pt-2 border-t border-white/5">
               <span className="text-zinc-500">You&apos;ll receive ~</span>
-              <span className="text-zinc-300 font-mono">
+              <span className="text-white font-mono font-medium">
                 {(parseFloat(amount) / parseFloat(limitPrice)).toFixed(4)} {tokenOut?.symbol}
               </span>
+            </div>
+          </div>
+        )}
+
+        {/* Invalid Bin Warning - only show when we have valid price data */}
+        {amount && limitPrice && parseFloat(limitPrice) > 0 && displayPrice > 0 && targetBinId === 0 && (
+          <div className="mb-6 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="text-xs text-red-400">
+                Invalid limit price. The target price is too far from the current market price.
+                Try a price closer to {displayPrice.toFixed(6)}.
+              </div>
             </div>
           </div>
         )}
@@ -345,8 +415,12 @@ export function LimitOrderCard() {
               Connect wallet to place order
             </div>
           ) : !pool ? (
+            <div className="w-full py-4 px-6 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-center font-medium text-sm">
+              {poolsLoading ? 'Loading pools...' : `No pool for ${tokenIn?.symbol}/${tokenOut?.symbol}. Try USDC/USDT pair.`}
+            </div>
+          ) : displayPrice <= 0 ? (
             <div className="w-full py-4 px-6 rounded-2xl bg-zinc-800/50 border border-white/5 text-zinc-500 text-center font-medium">
-              {poolsLoading ? 'Loading pools...' : 'No pool found for this pair'}
+              Loading price data...
             </div>
           ) : !amount || parsedAmount === BigInt(0) ? (
             <div className="w-full py-4 px-6 rounded-2xl bg-zinc-800/50 border border-white/5 text-zinc-500 text-center font-medium">
@@ -355,6 +429,10 @@ export function LimitOrderCard() {
           ) : !limitPrice || parseFloat(limitPrice) <= 0 ? (
             <div className="w-full py-4 px-6 rounded-2xl bg-zinc-800/50 border border-white/5 text-zinc-500 text-center font-medium">
               Enter a limit price
+            </div>
+          ) : targetBinId === 0 ? (
+            <div className="w-full py-4 px-6 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-center font-medium">
+              Invalid limit price
             </div>
           ) : insufficientBalance ? (
             <div className="w-full py-4 px-6 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-center font-medium flex items-center justify-center gap-2">

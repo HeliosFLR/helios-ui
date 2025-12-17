@@ -139,7 +139,7 @@ export function TokenSelector({ selectedToken, onSelect, excludeToken, tokenList
         onClick={() => setIsOpen(true)}
         className={cn(
           'flex items-center gap-1.5 px-2 py-1.5 rounded-lg transition-all shrink-0',
-          'bg-zinc-800 hover:bg-zinc-700 border border-white/10 hover:border-amber-500/30',
+          'bg-zinc-800 hover:bg-zinc-700 border border-white/10 hover:border-dune-400/30',
         )}
       >
         {selectedToken ? (
@@ -200,7 +200,7 @@ export function TokenSelector({ selectedToken, onSelect, excludeToken, tokenList
                       setImportAddress(e.target.value)
                       setImportError('')
                     }}
-                    className="w-full px-4 py-3 bg-zinc-800/50 border border-white/5 rounded-xl text-white placeholder:text-zinc-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 font-mono text-sm"
+                    className="w-full px-4 py-3 bg-zinc-800/50 border border-white/5 rounded-xl text-white placeholder:text-zinc-500 focus:outline-none focus:border-dune-400/50 focus:ring-1 focus:ring-dune-400/50 font-mono text-sm"
                   />
                 </div>
 
@@ -231,10 +231,10 @@ export function TokenSelector({ selectedToken, onSelect, excludeToken, tokenList
                 )}
 
                 {/* Warning */}
-                <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <div className="mb-4 p-3 rounded-xl bg-dune-400/10 border border-dune-400/20">
                   <div className="flex items-start gap-2">
-                    <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
-                    <div className="text-xs text-amber-500/80">
+                    <AlertTriangle className="h-4 w-4 text-dune-400 flex-shrink-0 mt-0.5" />
+                    <div className="text-xs text-dune-400/80">
                       Only import tokens you trust. Malicious tokens can steal your funds.
                       Always verify the token contract on the explorer.
                     </div>
@@ -263,7 +263,7 @@ export function TokenSelector({ selectedToken, onSelect, excludeToken, tokenList
                     className={cn(
                       'flex-1 py-3 px-4 rounded-xl font-medium transition-all',
                       importAddress && isAddress(importAddress) && !isLoadingToken && tokenData
-                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-black hover:opacity-90'
+                        ? 'bg-gradient-to-r from-dune-400 to-dune-500 text-black hover:opacity-90'
                         : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
                     )}
                   >
@@ -283,7 +283,7 @@ export function TokenSelector({ selectedToken, onSelect, excludeToken, tokenList
                       placeholder="Search name, symbol, or paste address"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 bg-zinc-800/50 border border-white/5 rounded-xl text-white placeholder:text-zinc-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50"
+                      className="w-full pl-10 pr-4 py-3 bg-zinc-800/50 border border-white/5 rounded-xl text-white placeholder:text-zinc-500 focus:outline-none focus:border-dune-400/50 focus:ring-1 focus:ring-dune-400/50"
                     />
                   </div>
 
@@ -295,7 +295,7 @@ export function TokenSelector({ selectedToken, onSelect, excludeToken, tokenList
                         setIsImporting(true)
                         setSearch('')
                       }}
-                      className="w-full mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500/20 transition-all flex items-center justify-center gap-2 text-sm font-medium"
+                      className="w-full mt-3 p-3 rounded-xl bg-dune-400/10 border border-dune-400/20 text-dune-400 hover:bg-dune-400/20 transition-all flex items-center justify-center gap-2 text-sm font-medium"
                     >
                       <Plus className="h-4 w-4" />
                       Import token at {search.slice(0, 6)}...{search.slice(-4)}
@@ -352,7 +352,7 @@ export function TokenSelector({ selectedToken, onSelect, excludeToken, tokenList
                       <p>No tokens found</p>
                       <button
                         onClick={() => setIsImporting(true)}
-                        className="mt-2 text-amber-500 hover:text-amber-400 text-sm flex items-center gap-1 mx-auto"
+                        className="mt-2 text-dune-400 hover:text-dune-300 text-sm flex items-center gap-1 mx-auto"
                       >
                         <Plus className="h-4 w-4" />
                         Import a token
@@ -372,7 +372,7 @@ export function TokenSelector({ selectedToken, onSelect, excludeToken, tokenList
                           className={cn(
                             'w-full flex items-center gap-3 p-3 rounded-xl transition-all',
                             'hover:bg-white/5',
-                            selectedToken?.address === token.address && 'bg-amber-500/10'
+                            selectedToken?.address === token.address && 'bg-dune-400/10'
                           )}
                         >
                           <TokenIcon symbol={token.symbol} size="lg" />
@@ -380,7 +380,7 @@ export function TokenSelector({ selectedToken, onSelect, excludeToken, tokenList
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-white">{token.symbol}</span>
                               {isCustomToken(token.address) && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-500/10 text-amber-500">
+                                <span className="px-1.5 py-0.5 rounded text-[10px] bg-dune-400/10 text-dune-400">
                                   Imported
                                 </span>
                               )}
@@ -427,7 +427,7 @@ function TokenIcon({ symbol, logoUrl, size = 'md' }: { symbol: string; logoUrl?:
   }[size]
 
   const colors: Record<string, string> = {
-    WFLR: 'from-rose-500 to-orange-500',
+    WFLR: 'from-rose-500 to-dune-500',
     USDT: 'from-emerald-500 to-teal-500',
     USDC: 'from-blue-500 to-cyan-500',
     sFLR: 'from-purple-500 to-pink-500',

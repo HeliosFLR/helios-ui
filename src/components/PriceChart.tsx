@@ -102,7 +102,7 @@ export function PriceChart({ tokenSymbol, currentPrice, priceChange24h = 0, clas
               className={cn(
                 'px-3 py-1.5 text-xs font-medium rounded-lg transition-all',
                 timeframe === tf
-                  ? 'bg-amber-500/20 text-amber-500'
+                  ? 'bg-dune-400/20 text-dune-400'
                   : 'text-zinc-500 hover:text-white'
               )}
             >

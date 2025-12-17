@@ -141,7 +141,7 @@ export function SwapCard() {
 
   const handleApprove = async () => {
     if (!tokenIn) return
-    await approve(tokenIn.address, CONTRACTS.LB_ROUTER, parsedAmountIn * BigInt(2))
+    await approve(tokenIn.address, CONTRACTS.LB_ROUTER, parsedAmountIn)
   }
 
   const handleSwap = async () => {
@@ -173,21 +173,21 @@ export function SwapCard() {
         className={cn(
           'relative glass-card rounded-3xl p-6 shadow-2xl transition-all duration-500',
           showSuccessAnimation && 'ring-2 ring-emerald-500/50 animate-success-burst',
-          'hover:shadow-amber-500/5'
+          'hover:shadow-dune-400/5'
         )}
       >
         {/* Animated border on hover */}
-        <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-amber-500/0 via-amber-500/10 to-amber-500/0 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-dune-400/0 via-dune-400/10 to-dune-400/0 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
         {/* Testnet Notice */}
-        <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-500/80">
+        <div className="mb-4 p-3 rounded-xl bg-dune-400/10 border border-dune-400/20 text-xs text-dune-400/80">
           <span className="font-medium">Testnet:</span> Only USDC/USDT swaps available. Other pools coming soon.
         </div>
 
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <Flame className="h-5 w-5 text-amber-500 animate-fire-flicker" />
+            <Flame className="h-5 w-5 text-dune-400 animate-fire-flicker" />
             <h2 className="text-xl font-bold text-white">Swap</h2>
           </div>
           <div className="flex items-center gap-2">
@@ -196,7 +196,7 @@ export function SwapCard() {
               onClick={() => setShowSettings(!showSettings)}
               className={cn(
                 'p-2 rounded-xl transition-all duration-200',
-                showSettings ? 'bg-amber-500/20 text-amber-500' : 'hover:bg-white/5 text-zinc-400 hover:text-white'
+                showSettings ? 'bg-dune-400/20 text-dune-400' : 'hover:bg-white/5 text-zinc-400 hover:text-white'
               )}
             >
               <Settings2 className="h-5 w-5" />
@@ -223,12 +223,12 @@ export function SwapCard() {
               onClick={handleSwapTokens}
               className={cn(
                 'p-3 rounded-2xl bg-zinc-800/80 border border-white/10 transition-all duration-300',
-                'hover:border-amber-500/50 hover:bg-zinc-700/80 hover:shadow-lg hover:shadow-amber-500/10',
+                'hover:border-dune-400/50 hover:bg-zinc-700/80 hover:shadow-lg hover:shadow-dune-400/10',
                 'active:scale-95 group',
                 isSwapAnimating && 'rotate-180'
               )}
             >
-              <ArrowDownUp className="h-5 w-5 text-zinc-400 group-hover:text-amber-500 transition-colors" />
+              <ArrowDownUp className="h-5 w-5 text-zinc-400 group-hover:text-dune-400 transition-colors" />
             </button>
           </div>
 
@@ -254,12 +254,12 @@ export function SwapCard() {
               <div className="flex items-center gap-2">
                 <span className="text-zinc-500">Route</span>
                 {isMultiHop && (
-                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-500/10 text-amber-500 font-medium">
+                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-dune-400/10 text-dune-400 font-medium">
                     Multi-hop
                   </span>
                 )}
                 {isQuoteLoading && (
-                  <RefreshCw className="h-3 w-3 text-amber-500 animate-spin" />
+                  <RefreshCw className="h-3 w-3 text-dune-400 animate-spin" />
                 )}
               </div>
               <div className="flex items-center gap-1">
@@ -270,7 +270,7 @@ export function SwapCard() {
                       <span className="text-xs text-zinc-400">{symbol}</span>
                     </div>
                     {index < swapRoute.length - 1 && (
-                      <Sparkles className="h-3 w-3 text-amber-500" />
+                      <Sparkles className="h-3 w-3 text-dune-400" />
                     )}
                   </div>
                 ))}
@@ -304,7 +304,7 @@ export function SwapCard() {
               </span>
             </div>
             {quoteError && (
-              <div className="flex items-center gap-2 text-xs text-amber-500/70">
+              <div className="flex items-center gap-2 text-xs text-dune-400/70">
                 <AlertCircle className="h-3 w-3" />
                 Using estimated quote
               </div>
@@ -394,7 +394,7 @@ export function SwapCard() {
             <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
             <span className="text-emerald-400 text-sm font-medium">Swap successful!</span>
             {xpEarned > 0 && (
-              <span className="ml-auto text-amber-500 text-sm font-medium">+{xpEarned} XP</span>
+              <span className="ml-auto text-dune-400 text-sm font-medium">+{xpEarned} XP</span>
             )}
           </div>
         )}
@@ -453,8 +453,8 @@ function TokenInput({
       'p-4 rounded-2xl border transition-all duration-200',
       'bg-zinc-900/50 border-white/5',
       'hover:border-white/10',
-      'focus-within:border-amber-500/30',
-      highlight && 'border-amber-500/20 bg-amber-500/5'
+      'focus-within:border-dune-400/30',
+      highlight && 'border-dune-400/20 bg-dune-400/5'
     )}>
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs text-zinc-500 uppercase tracking-wide">{label}</span>
@@ -465,7 +465,7 @@ function TokenInput({
                 onAmountChange(formatAmount(balance, token.decimals, token.decimals))
               }
             }}
-            className="text-xs text-zinc-500 hover:text-amber-500 transition-colors"
+            className="text-xs text-zinc-500 hover:text-dune-400 transition-colors"
           >
             Balance: <span className="font-mono">{formatAmount(balance, token.decimals)}</span>
           </button>
@@ -487,7 +487,7 @@ function TokenInput({
           className={cn(
             'flex-1 min-w-0 bg-transparent text-2xl font-semibold text-white placeholder:text-zinc-600 focus:outline-none',
             readOnly && 'cursor-default',
-            highlight && 'text-amber-500'
+            highlight && 'text-dune-400'
           )}
         />
         <TokenSelector
@@ -515,7 +515,7 @@ function SlippageSelector({ value, onChange, show }: { value: number; onChange: 
           className={cn(
             'px-3 py-1.5 text-xs rounded-xl transition-all duration-200',
             value === preset
-              ? 'bg-amber-500/20 text-amber-500 border border-amber-500/30 shadow-sm shadow-amber-500/10'
+              ? 'bg-dune-400/20 text-dune-400 border border-dune-400/30 shadow-sm shadow-dune-400/10'
               : 'text-zinc-500 hover:text-white hover:bg-white/5 border border-transparent'
           )}
         >

@@ -25,16 +25,16 @@ export default function AnalyticsPage() {
     <div className="w-full max-w-6xl mx-auto">
       {/* Hero Header */}
       <div className="relative mb-10">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-radial from-amber-500/10 via-orange-500/5 to-transparent blur-3xl -z-10" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-radial from-dune-400/10 via-dune-500/5 to-transparent blur-3xl -z-10" />
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <div className="p-2.5 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500">
+              <div className="p-2.5 rounded-2xl bg-gradient-to-br from-dune-400 to-dune-500">
                 <BarChart3 className="h-6 w-6 text-black" />
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold text-white">
-                Analytics <span className="text-amber-500">Dashboard</span>
+                Analytics <span className="text-dune-400">Dashboard</span>
               </h1>
             </div>
             <p className="text-zinc-500 max-w-md">
@@ -77,7 +77,7 @@ export default function AnalyticsPage() {
         {/* Token List */}
         <div className="glass-card rounded-2xl p-5">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Flame className="h-5 w-5 text-amber-500 animate-fire-flicker" />
+            <Flame className="h-5 w-5 text-dune-400 animate-fire-flicker" />
             Token Prices
           </h3>
           <div className="space-y-2">
@@ -93,7 +93,7 @@ export default function AnalyticsPage() {
                   className={cn(
                     'w-full p-3 rounded-xl flex items-center justify-between transition-all duration-200',
                     isSelected
-                      ? 'bg-amber-500/10 border border-amber-500/30'
+                      ? 'bg-dune-400/10 border border-dune-400/30'
                       : 'hover:bg-white/5 border border-transparent'
                   )}
                 >
@@ -139,7 +139,7 @@ export default function AnalyticsPage() {
       {/* Pool Analytics */}
       <div className="mb-8">
         <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-          <BarChart3 className="h-5 w-5 text-amber-500" />
+          <BarChart3 className="h-5 w-5 text-dune-400" />
           Pool Analytics
         </h2>
         <PoolAnalytics />
@@ -148,7 +148,7 @@ export default function AnalyticsPage() {
       {/* Top Trading Pairs */}
       <div className="glass-card rounded-2xl p-6">
         <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-amber-500" />
+          <TrendingUp className="h-5 w-5 text-dune-400" />
           Top Trading Pairs (24h)
         </h3>
         <div className="overflow-x-auto">
@@ -229,7 +229,7 @@ function StatCard({
   return (
     <div className="glass-card rounded-2xl p-4 group">
       <div className="flex items-center justify-between mb-3">
-        <div className="p-2 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-amber-500 group-hover:scale-110 transition-transform duration-300">
+        <div className="p-2 rounded-xl bg-gradient-to-br from-dune-400/20 to-dune-500/20 text-dune-400 group-hover:scale-110 transition-transform duration-300">
           {icon}
         </div>
         {change !== 0 && (

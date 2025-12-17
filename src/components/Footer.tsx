@@ -1,7 +1,7 @@
 'use client'
 
 import { Sun, ExternalLink } from 'lucide-react'
-import { ExportXPButton } from './GamificationBar'
+import { ExportXPButton, ResetXPButton } from './GamificationBar'
 
 // Twitter/X icon component
 function XIcon({ className }: { className?: string }) {
@@ -29,7 +29,7 @@ export function Footer() {
           {/* Left - Brand */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <Sun className="h-5 w-5 text-amber-500" />
+              <Sun className="h-5 w-5 text-dune-400" />
               <span className="font-bold text-white">Helios</span>
             </div>
             <span className="text-zinc-600 text-sm hidden sm:block">|</span>
@@ -38,9 +38,10 @@ export function Footer() {
             </span>
           </div>
 
-          {/* Center - XP Export */}
-          <div className="hidden md:block">
+          {/* Center - XP Actions */}
+          <div className="hidden md:flex items-center gap-2">
             <ExportXPButton />
+            <ResetXPButton />
           </div>
 
           {/* Right - Social Links */}

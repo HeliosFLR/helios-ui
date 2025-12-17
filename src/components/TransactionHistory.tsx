@@ -33,13 +33,13 @@ export function TransactionHistory() {
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           'flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200',
-          'bg-zinc-800/50 border border-white/5 hover:border-amber-500/30',
-          isOpen && 'bg-amber-500/10 border-amber-500/30'
+          'bg-zinc-800/50 border border-white/5 hover:border-dune-400/30',
+          isOpen && 'bg-dune-400/10 border-dune-400/30'
         )}
       >
         <History className="h-4 w-4 text-zinc-400" />
         {pendingCount > 0 && (
-          <span className="flex items-center justify-center h-5 w-5 text-xs font-medium bg-amber-500 text-black rounded-full animate-pulse">
+          <span className="flex items-center justify-center h-5 w-5 text-xs font-medium bg-dune-400 text-black rounded-full animate-pulse">
             {pendingCount}
           </span>
         )}
@@ -55,7 +55,7 @@ export function TransactionHistory() {
           {/* Header */}
           <div className="p-4 border-b border-white/5 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <History className="h-5 w-5 text-amber-500" />
+              <History className="h-5 w-5 text-dune-400" />
               <span className="font-semibold text-white">Recent Transactions</span>
             </div>
             {transactions.length > 0 && (
@@ -94,7 +94,7 @@ function TransactionItem({ transaction }: { transaction: Transaction }) {
   const { type, status, hash, timestamp, tokenIn, tokenOut, amountIn, amountOut, poolPair } = transaction
 
   const StatusIcon = {
-    pending: <Loader2 className="h-4 w-4 text-amber-500 animate-spin" />,
+    pending: <Loader2 className="h-4 w-4 text-dune-400 animate-spin" />,
     confirmed: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
     failed: <XCircle className="h-4 w-4 text-red-500" />,
   }[status]
@@ -117,7 +117,7 @@ function TransactionItem({ transaction }: { transaction: Transaction }) {
       <div className={cn(
         'p-2 rounded-xl',
         status === 'confirmed' && 'bg-emerald-500/10 text-emerald-500',
-        status === 'pending' && 'bg-amber-500/10 text-amber-500',
+        status === 'pending' && 'bg-dune-400/10 text-dune-400',
         status === 'failed' && 'bg-red-500/10 text-red-500'
       )}>
         {TypeIcon}
@@ -147,7 +147,7 @@ function TransactionItem({ transaction }: { transaction: Transaction }) {
       {/* Time & Link */}
       <div className="flex flex-col items-end gap-1">
         <span className="text-xs text-zinc-500">{formatTimeAgo(timestamp)}</span>
-        <ExternalLink className="h-3 w-3 text-zinc-600 group-hover:text-amber-500 transition-colors" />
+        <ExternalLink className="h-3 w-3 text-zinc-600 group-hover:text-dune-400 transition-colors" />
       </div>
     </a>
   )
@@ -160,9 +160,9 @@ export function TransactionHistoryMini() {
   if (pendingCount === 0) return null
 
   return (
-    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
-      <Loader2 className="h-3.5 w-3.5 text-amber-500 animate-spin" />
-      <span className="text-xs font-medium text-amber-500">{pendingCount} pending</span>
+    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-dune-400/10 border border-dune-400/20">
+      <Loader2 className="h-3.5 w-3.5 text-dune-400 animate-spin" />
+      <span className="text-xs font-medium text-dune-400">{pendingCount} pending</span>
     </div>
   )
 }

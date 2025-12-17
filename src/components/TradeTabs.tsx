@@ -20,7 +20,7 @@ export function TradeTabs() {
           className={cn(
             'flex-1 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2',
             activeTab === 'swap'
-              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-black'
+              ? 'bg-gradient-to-r from-dune-400 to-dune-500 text-black'
               : 'text-zinc-500 hover:text-white'
           )}
         >
@@ -32,7 +32,7 @@ export function TradeTabs() {
           className={cn(
             'flex-1 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2',
             activeTab === 'limit'
-              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-black'
+              ? 'bg-gradient-to-r from-dune-400 to-dune-500 text-black'
               : 'text-zinc-500 hover:text-white'
           )}
         >

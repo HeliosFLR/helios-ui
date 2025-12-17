@@ -204,11 +204,11 @@ export function FTSODelegationCard() {
 
           {/* Claim Rewards Section */}
           {hasUnclaimedRewards && (
-            <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20">
+            <div className="p-4 rounded-xl bg-gradient-to-r from-dune-400/10 to-dune-500/10 border border-dune-400/20">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <Gift className="h-4 w-4 text-amber-500" />
-                  <span className="text-sm font-medium text-amber-400">Unclaimed Rewards</span>
+                  <Gift className="h-4 w-4 text-dune-400" />
+                  <span className="text-sm font-medium text-dune-300">Unclaimed Rewards</span>
                 </div>
                 <span className="text-xs text-zinc-500">
                   {unclaimedEpochs?.length} epoch{unclaimedEpochs && unclaimedEpochs.length !== 1 ? 's' : ''}
@@ -217,7 +217,7 @@ export function FTSODelegationCard() {
               <button
                 onClick={handleClaimRewards}
                 disabled={isPending}
-                className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-black text-sm font-semibold hover:from-amber-400 hover:to-orange-400 transition-all disabled:opacity-50"
+                className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-dune-400 to-dune-500 text-black text-sm font-semibold hover:from-dune-300 hover:to-orange-400 transition-all disabled:opacity-50"
               >
                 {isClaiming || isClaimConfirming ? (
                   <span className="flex items-center justify-center gap-2">
@@ -340,9 +340,9 @@ export function FTSODelegationCard() {
           )}
 
           {undelegateSuccess && (
-            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-amber-500" />
-              <span className="text-amber-400 text-sm">Delegation removed successfully.</span>
+            <div className="p-3 rounded-xl bg-dune-400/10 border border-dune-400/20 flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-dune-400" />
+              <span className="text-dune-300 text-sm">Delegation removed successfully.</span>
             </div>
           )}
 

@@ -118,8 +118,8 @@ export function CreatePoolModal({ isOpen, onClose }: CreatePoolModalProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20">
-              <Plus className="h-5 w-5 text-amber-500" />
+            <div className="p-2 rounded-xl bg-gradient-to-br from-dune-400/20 to-dune-500/20">
+              <Plus className="h-5 w-5 text-dune-400" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-white">Create Pool</h2>
@@ -140,7 +140,7 @@ export function CreatePoolModal({ isOpen, onClose }: CreatePoolModalProps) {
             <label className="text-sm text-zinc-500 mb-2 block">Token X (Base)</label>
             <button
               onClick={() => setIsSelectingToken('X')}
-              className="w-full p-4 rounded-xl bg-zinc-800/50 border border-white/5 hover:border-amber-500/30 transition-all flex items-center justify-between"
+              className="w-full p-4 rounded-xl bg-zinc-800/50 border border-white/5 hover:border-dune-400/30 transition-all flex items-center justify-between"
             >
               {tokenX ? (
                 <div className="flex items-center gap-3">
@@ -161,7 +161,7 @@ export function CreatePoolModal({ isOpen, onClose }: CreatePoolModalProps) {
             <label className="text-sm text-zinc-500 mb-2 block">Token Y (Quote)</label>
             <button
               onClick={() => setIsSelectingToken('Y')}
-              className="w-full p-4 rounded-xl bg-zinc-800/50 border border-white/5 hover:border-amber-500/30 transition-all flex items-center justify-between"
+              className="w-full p-4 rounded-xl bg-zinc-800/50 border border-white/5 hover:border-dune-400/30 transition-all flex items-center justify-between"
             >
               {tokenY ? (
                 <div className="flex items-center gap-3">
@@ -198,7 +198,7 @@ export function CreatePoolModal({ isOpen, onClose }: CreatePoolModalProps) {
                 className={cn(
                   'p-3 rounded-xl border transition-all text-center',
                   binStep === step.value
-                    ? 'bg-amber-500/20 border-amber-500/40 text-amber-500'
+                    ? 'bg-dune-400/20 border-dune-400/40 text-dune-400'
                     : 'bg-zinc-800/50 border-white/5 text-zinc-400 hover:border-white/10'
                 )}
               >
@@ -214,15 +214,15 @@ export function CreatePoolModal({ isOpen, onClose }: CreatePoolModalProps) {
           <div className={cn(
             'p-4 rounded-xl mb-6 flex items-start gap-3',
             poolExists
-              ? 'bg-amber-500/10 border border-amber-500/20'
+              ? 'bg-dune-400/10 border border-dune-400/20'
               : 'bg-emerald-500/10 border border-emerald-500/20'
           )}>
             {poolExists ? (
               <>
-                <AlertCircle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                <AlertCircle className="h-5 w-5 text-dune-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <div className="font-medium text-amber-500">Pool Already Exists</div>
-                  <div className="text-sm text-amber-500/70 mt-1">
+                  <div className="font-medium text-dune-400">Pool Already Exists</div>
+                  <div className="text-sm text-dune-400/70 mt-1">
                     A {tokenX.symbol}/{tokenY.symbol} pool with {binStep / 100}% fee already exists.
                     You can add liquidity to the existing pool instead.
                   </div>
@@ -305,7 +305,7 @@ export function CreatePoolModal({ isOpen, onClose }: CreatePoolModalProps) {
                 <button
                   key={token.address}
                   onClick={() => handleTokenSelect(token)}
-                  className="w-full p-4 rounded-xl bg-zinc-800/50 border border-white/5 hover:border-amber-500/30 transition-all flex items-center gap-3"
+                  className="w-full p-4 rounded-xl bg-zinc-800/50 border border-white/5 hover:border-dune-400/30 transition-all flex items-center gap-3"
                 >
                   <TokenIcon symbol={token.symbol} />
                   <div className="text-left flex-1">

@@ -31,73 +31,78 @@ export interface UserXPData {
 }
 
 // XP Configuration - These values determine XP rewards
+// NOTE: Values are tuned for TESTNET - tokens have no real value
+// Focus is on engagement/actions rather than volume
 export const XP_CONFIG = {
-  // Base XP for actions
-  SWAP_BASE_XP: 10,
-  SWAP_PER_USD: 0.5, // 0.5 XP per $1 swapped
-  ADD_LIQUIDITY_BASE_XP: 50,
-  ADD_LIQUIDITY_PER_USD: 1, // 1 XP per $1 of liquidity added
-  REMOVE_LIQUIDITY_XP: 10,
-  REBALANCE_XP: 100,
+  // Base XP for actions (flat rates - volume doesn't matter on testnet)
+  SWAP_BASE_XP: 5,           // 5 XP per swap
+  SWAP_PER_USD: 0.01,        // Minimal volume bonus (testnet tokens are free)
+  SWAP_MAX_VOLUME_XP: 5,     // Cap volume XP at 5 per swap
+  ADD_LIQUIDITY_BASE_XP: 15, // 15 XP for adding liquidity
+  ADD_LIQUIDITY_PER_USD: 0.02, // Minimal volume bonus
+  ADD_LIQUIDITY_MAX_VOLUME_XP: 10, // Cap at 10 XP
+  REMOVE_LIQUIDITY_XP: 3,    // 3 XP for removing (discourage churning)
+  REBALANCE_XP: 20,          // 20 XP for rebalancing
 
-  // Bonus XP
-  FIRST_SWAP_BONUS: 100,
-  FIRST_LP_BONUS: 250,
-  DAILY_LOGIN_XP: 5,
+  // Bonus XP (modest bonuses for first-time actions)
+  FIRST_SWAP_BONUS: 25,      // 25 XP for first swap
+  FIRST_LP_BONUS: 50,        // 50 XP for first LP
+  DAILY_LOGIN_XP: 2,         // 2 XP daily
 
-  // Streak bonuses (multiplier)
+  // Streak bonuses (multiplier) - keep these for engagement
   STREAK_MULTIPLIER: {
     3: 1.1,   // 3 day streak = 10% bonus
-    7: 1.25,  // 7 day streak = 25% bonus
-    14: 1.5,  // 14 day streak = 50% bonus
-    30: 2.0,  // 30 day streak = 100% bonus
+    7: 1.2,   // 7 day streak = 20% bonus
+    14: 1.3,  // 14 day streak = 30% bonus
+    30: 1.5,  // 30 day streak = 50% bonus
   },
 
-  // Level thresholds (XP required for each level)
+  // Level thresholds - adjusted for new lower XP values
+  // ~10-20 swaps per level early, scaling up
   LEVEL_THRESHOLDS: [
     0,      // Level 1
-    100,    // Level 2
-    250,    // Level 3
-    500,    // Level 4
-    1000,   // Level 5
-    2000,   // Level 6
-    4000,   // Level 7
-    7500,   // Level 8
-    12500,  // Level 9
-    20000,  // Level 10
-    35000,  // Level 11
-    55000,  // Level 12
-    85000,  // Level 13
-    125000, // Level 14
-    175000, // Level 15
-    250000, // Level 16
-    350000, // Level 17
-    500000, // Level 18
-    750000, // Level 19
-    1000000, // Level 20
+    50,     // Level 2 (~10 swaps)
+    120,    // Level 3
+    220,    // Level 4
+    350,    // Level 5
+    520,    // Level 6
+    750,    // Level 7
+    1050,   // Level 8
+    1450,   // Level 9
+    2000,   // Level 10
+    2800,   // Level 11
+    3900,   // Level 12
+    5400,   // Level 13
+    7500,   // Level 14
+    10000,  // Level 15
+    13500,  // Level 16
+    18000,  // Level 17
+    24000,  // Level 18
+    32000,  // Level 19
+    42000,  // Level 20
   ],
 }
 
-// Achievement definitions
+// Achievement definitions - XP bonuses tuned for testnet
 export const ACHIEVEMENTS = {
-  first_swap: { name: 'First Swap', description: 'Complete your first swap', icon: '🔄', xpBonus: 100 },
-  first_lp: { name: 'Liquidity Provider', description: 'Add liquidity for the first time', icon: '💧', xpBonus: 250 },
-  rebalancer: { name: 'Rebalancer', description: 'Rebalance a position', icon: '⚖️', xpBonus: 100 },
-  streak_3: { name: 'On Fire', description: '3 day trading streak', icon: '🔥', xpBonus: 50 },
-  streak_7: { name: 'Weekly Warrior', description: '7 day trading streak', icon: '⚔️', xpBonus: 150 },
-  streak_14: { name: 'Dedicated', description: '14 day trading streak', icon: '💪', xpBonus: 300 },
-  streak_30: { name: 'Legend', description: '30 day trading streak', icon: '👑', xpBonus: 1000 },
-  trades_10: { name: 'Active Trader', description: 'Complete 10 trades', icon: '📈', xpBonus: 100 },
-  trades_50: { name: 'Experienced', description: 'Complete 50 trades', icon: '🎯', xpBonus: 500 },
-  trades_100: { name: 'Master Trader', description: 'Complete 100 trades', icon: '🏆', xpBonus: 1000 },
-  volume_1k: { name: 'Whale Spotter', description: 'Trade $1,000 in volume', icon: '🐋', xpBonus: 200 },
-  volume_10k: { name: 'Market Mover', description: 'Trade $10,000 in volume', icon: '💰', xpBonus: 1000 },
-  volume_100k: { name: 'Whale', description: 'Trade $100,000 in volume', icon: '🐳', xpBonus: 5000 },
-  lp_1k: { name: 'LP Starter', description: 'Provide $1,000 in liquidity', icon: '🌊', xpBonus: 300 },
-  lp_10k: { name: 'LP Pro', description: 'Provide $10,000 in liquidity', icon: '🌊', xpBonus: 1500 },
-  level_5: { name: 'Rising Star', description: 'Reach level 5', icon: '⭐', xpBonus: 100 },
-  level_10: { name: 'Veteran', description: 'Reach level 10', icon: '🌟', xpBonus: 500 },
-  level_20: { name: 'Elite', description: 'Reach level 20', icon: '💫', xpBonus: 2000 },
+  first_swap: { name: 'First Swap', description: 'Complete your first swap', icon: '🔄', xpBonus: 10 },
+  first_lp: { name: 'Liquidity Provider', description: 'Add liquidity for the first time', icon: '💧', xpBonus: 20 },
+  rebalancer: { name: 'Rebalancer', description: 'Rebalance a position', icon: '⚖️', xpBonus: 15 },
+  streak_3: { name: 'On Fire', description: '3 day trading streak', icon: '🔥', xpBonus: 10 },
+  streak_7: { name: 'Weekly Warrior', description: '7 day trading streak', icon: '⚔️', xpBonus: 25 },
+  streak_14: { name: 'Dedicated', description: '14 day trading streak', icon: '💪', xpBonus: 50 },
+  streak_30: { name: 'Legend', description: '30 day trading streak', icon: '👑', xpBonus: 100 },
+  trades_10: { name: 'Active Trader', description: 'Complete 10 trades', icon: '📈', xpBonus: 15 },
+  trades_50: { name: 'Experienced', description: 'Complete 50 trades', icon: '🎯', xpBonus: 50 },
+  trades_100: { name: 'Master Trader', description: 'Complete 100 trades', icon: '🏆', xpBonus: 100 },
+  volume_1k: { name: 'Whale Spotter', description: 'Trade $1,000 in volume', icon: '🐋', xpBonus: 20 },
+  volume_10k: { name: 'Market Mover', description: 'Trade $10,000 in volume', icon: '💰', xpBonus: 75 },
+  volume_100k: { name: 'Whale', description: 'Trade $100,000 in volume', icon: '🐳', xpBonus: 200 },
+  lp_1k: { name: 'LP Starter', description: 'Provide $1,000 in liquidity', icon: '🌊', xpBonus: 30 },
+  lp_10k: { name: 'LP Pro', description: 'Provide $10,000 in liquidity', icon: '🌊', xpBonus: 100 },
+  level_5: { name: 'Rising Star', description: 'Reach level 5', icon: '⭐', xpBonus: 20 },
+  level_10: { name: 'Veteran', description: 'Reach level 10', icon: '🌟', xpBonus: 50 },
+  level_20: { name: 'Elite', description: 'Reach level 20', icon: '💫', xpBonus: 150 },
 }
 
 const XP_STORAGE_KEY = 'helios_xp_data'
@@ -190,6 +195,33 @@ export function saveUserXPData(data: UserXPData): void {
   window.dispatchEvent(new CustomEvent('xp-updated', { detail: data }))
 }
 
+// Clear/reset user XP data (for testing or fresh start)
+export function clearUserXPData(address: string): void {
+  if (typeof window === 'undefined') return
+
+  const storageKey = `${XP_STORAGE_KEY}_${address.toLowerCase()}`
+  localStorage.removeItem(storageKey)
+
+  // Dispatch event for UI updates with fresh data
+  const freshData = createDefaultUserData(address)
+  window.dispatchEvent(new CustomEvent('xp-updated', { detail: freshData }))
+}
+
+// Clear ALL XP data (admin function for full reset)
+export function clearAllXPData(): void {
+  if (typeof window === 'undefined') return
+
+  const keysToRemove: string[] = []
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (key?.startsWith(XP_STORAGE_KEY)) {
+      keysToRemove.push(key)
+    }
+  }
+
+  keysToRemove.forEach(key => localStorage.removeItem(key))
+}
+
 // Update streak
 function updateStreak(data: UserXPData): UserXPData {
   const today = getTodayString()
@@ -268,8 +300,12 @@ export function recordSwap(address: string, volumeUSD: number, txHash?: string):
 
   const isFirstSwap = data.stats.totalSwaps === 0
 
-  // Calculate XP
-  let xpEarned = XP_CONFIG.SWAP_BASE_XP + Math.floor(volumeUSD * XP_CONFIG.SWAP_PER_USD)
+  // Calculate XP with capped volume bonus
+  const volumeXP = Math.min(
+    Math.floor(volumeUSD * XP_CONFIG.SWAP_PER_USD),
+    XP_CONFIG.SWAP_MAX_VOLUME_XP
+  )
+  let xpEarned = XP_CONFIG.SWAP_BASE_XP + volumeXP
 
   // Apply streak multiplier
   const streakMultiplier = getStreakMultiplier(data.stats.currentStreak)
@@ -315,8 +351,12 @@ export function recordAddLiquidity(address: string, volumeUSD: number, txHash?: 
 
   const isFirstLP = data.stats.totalLiquidityAdded === 0
 
-  // Calculate XP
-  let xpEarned = XP_CONFIG.ADD_LIQUIDITY_BASE_XP + Math.floor(volumeUSD * XP_CONFIG.ADD_LIQUIDITY_PER_USD)
+  // Calculate XP with capped volume bonus
+  const volumeXP = Math.min(
+    Math.floor(volumeUSD * XP_CONFIG.ADD_LIQUIDITY_PER_USD),
+    XP_CONFIG.ADD_LIQUIDITY_MAX_VOLUME_XP
+  )
+  let xpEarned = XP_CONFIG.ADD_LIQUIDITY_BASE_XP + volumeXP
 
   // Apply streak multiplier
   const streakMultiplier = getStreakMultiplier(data.stats.currentStreak)

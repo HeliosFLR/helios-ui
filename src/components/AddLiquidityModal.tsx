@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useAccount } from 'wagmi'
-import { X, Loader2, AlertCircle, CheckCircle2, Info, Droplets, Sparkles } from 'lucide-react'
+import { X, Loader2, AlertCircle, CheckCircle2, Droplets, Sparkles, AlertTriangle } from 'lucide-react'
 import { TokenIcon } from './TokenSelector'
 import { useTokenBalance, useTokenAllowance } from '@/hooks/useTokenBalance'
 import { useAddLiquidity, useApprove } from '@/hooks/useSwap'
 import { CONTRACTS, type Token } from '@/config/contracts'
-import { formatAmount, parseAmount, cn } from '@/lib/utils'
+import { formatAmount, parseAmount, cn, calculatePriceFromBinId } from '@/lib/utils'
 import { useXP } from './GamificationBar'
 
 interface Pool {
@@ -33,6 +33,46 @@ export function AddLiquidityModal({ isOpen, onClose, pool }: AddLiquidityModalPr
   const [xpEarned, setXpEarned] = useState(0)
 
   const { recordAddLiquidityXP } = useXP()
+
+  // Calculate pool price from active bin
+  const poolPrice = pool.activeId
+    ? calculatePriceFromBinId(pool.activeId, pool.binStep, pool.tokenX.decimals, pool.tokenY.decimals)
+    : 1
+
+  // Auto-populate the other token amount when one changes
+  const handleAmountXChange = (value: string) => {
+    setAmountX(value)
+
+    // Calculate corresponding Y amount based on pool price
+    if (value && poolPrice > 0) {
+      const numValue = parseFloat(value)
+      if (!isNaN(numValue) && numValue > 0) {
+        const calculatedY = numValue * poolPrice
+        setAmountY(calculatedY.toFixed(6).replace(/\.?0+$/, ''))
+      } else {
+        setAmountY('')
+      }
+    } else {
+      setAmountY('')
+    }
+  }
+
+  const handleAmountYChange = (value: string) => {
+    setAmountY(value)
+
+    // Calculate corresponding X amount based on pool price
+    if (value && poolPrice > 0) {
+      const numValue = parseFloat(value)
+      if (!isNaN(numValue) && numValue > 0) {
+        const calculatedX = numValue / poolPrice
+        setAmountX(calculatedX.toFixed(6).replace(/\.?0+$/, ''))
+      } else {
+        setAmountX('')
+      }
+    } else {
+      setAmountX('')
+    }
+  }
 
   const { balance: balanceX, refetch: refetchBalanceX } = useTokenBalance(pool.tokenX.address)
   const { balance: balanceY, refetch: refetchBalanceY } = useTokenBalance(pool.tokenY.address)
@@ -63,6 +103,9 @@ export function AddLiquidityModal({ isOpen, onClose, pool }: AddLiquidityModalPr
 
   const insufficientBalanceX = parsedAmountX > balanceX
   const insufficientBalanceY = parsedAmountY > balanceY
+
+  // Check for decimal mismatch - pools with different decimals have known issues
+  const hasDecimalMismatch = pool.tokenX.decimals !== pool.tokenY.decimals
 
   // Refetch allowances after approval
   useEffect(() => {
@@ -115,11 +158,11 @@ export function AddLiquidityModal({ isOpen, onClose, pool }: AddLiquidityModalPr
   }, [isOpen])
 
   const handleApproveX = async () => {
-    await approve(pool.tokenX.address, CONTRACTS.LB_ROUTER, parsedAmountX * BigInt(2))
+    await approve(pool.tokenX.address, CONTRACTS.LB_ROUTER, parsedAmountX)
   }
 
   const handleApproveY = async () => {
-    await approve(pool.tokenY.address, CONTRACTS.LB_ROUTER, parsedAmountY * BigInt(2))
+    await approve(pool.tokenY.address, CONTRACTS.LB_ROUTER, parsedAmountY)
   }
 
   const handleAddLiquidity = async () => {
@@ -151,8 +194,8 @@ export function AddLiquidityModal({ isOpen, onClose, pool }: AddLiquidityModalPr
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/5">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-amber-500/10">
-              <Droplets className="h-5 w-5 text-amber-500" />
+            <div className="p-2 rounded-xl bg-dune-400/10">
+              <Droplets className="h-5 w-5 text-dune-400" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-white">Add Liquidity</h3>
@@ -171,77 +214,127 @@ export function AddLiquidityModal({ isOpen, onClose, pool }: AddLiquidityModalPr
 
         {/* Content */}
         <div className="p-6 space-y-6">
+          {/* Decimal Mismatch Warning */}
+          {hasDecimalMismatch && (
+            <div className="p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-yellow-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-yellow-400 font-medium text-sm">Pool Has Known Issues</p>
+                  <p className="text-yellow-400/70 text-xs mt-1">
+                    This pool has different token decimals ({pool.tokenX.decimals} vs {pool.tokenY.decimals})
+                    which may cause price calculation issues. Adding liquidity may work, but swaps and rebalancing
+                    might fail. Use USDC/USDT pool for full functionality.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Token Inputs */}
           <div className="space-y-3">
             <TokenAmountInput
               token={pool.tokenX}
               amount={amountX}
               balance={balanceX}
-              onChange={setAmountX}
+              onChange={handleAmountXChange}
               insufficientBalance={insufficientBalanceX}
             />
+            <div className="flex items-center justify-center">
+              <div className="px-3 py-1 rounded-lg bg-zinc-800/50 text-xs text-zinc-500">
+                1 {pool.tokenX.symbol} ≈ {poolPrice.toFixed(4)} {pool.tokenY.symbol}
+              </div>
+            </div>
             <TokenAmountInput
               token={pool.tokenY}
               amount={amountY}
               balance={balanceY}
-              onChange={setAmountY}
+              onChange={handleAmountYChange}
               insufficientBalance={insufficientBalanceY}
             />
           </div>
 
           {/* Bin Range Selector */}
           <div className="p-4 rounded-2xl bg-zinc-800/50 border border-white/5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm text-zinc-400">Price Range (Bins)</span>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-zinc-400">Price Range</span>
               <span className="text-sm text-white font-medium">±{binRange} bins</span>
             </div>
+            {/* Show calculated price range */}
+            {pool.activeId && (
+              <div className="mb-3 p-2 rounded-lg bg-zinc-900/50 border border-dune-400/20">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-zinc-400">Min Price:</span>
+                  <span className="text-white font-mono">
+                    {calculatePriceFromBinId(
+                      pool.activeId - binRange,
+                      pool.binStep,
+                      pool.tokenX.decimals,
+                      pool.tokenY.decimals
+                    ).toFixed(4)} {pool.tokenY.symbol}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm mt-1">
+                  <span className="text-zinc-400">Max Price:</span>
+                  <span className="text-white font-mono">
+                    {calculatePriceFromBinId(
+                      pool.activeId + binRange,
+                      pool.binStep,
+                      pool.tokenX.decimals,
+                      pool.tokenY.decimals
+                    ).toFixed(4)} {pool.tokenY.symbol}
+                  </span>
+                </div>
+                <div className="flex items-center justify-center mt-2 pt-2 border-t border-white/5">
+                  <span className="text-xs text-dune-400">
+                    Current: {poolPrice.toFixed(4)} {pool.tokenY.symbol} per {pool.tokenX.symbol}
+                  </span>
+                </div>
+              </div>
+            )}
             <input
               type="range"
               min={1}
               max={25}
               value={binRange}
               onChange={(e) => setBinRange(parseInt(e.target.value))}
-              className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-amber-500"
+              className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-dune-400"
             />
             <div className="flex justify-between mt-2 text-xs text-zinc-500">
-              <span>Narrow (±1)</span>
-              <span>Wide (±25)</span>
+              <span>Narrow (higher fees)</span>
+              <span>Wide (lower risk)</span>
             </div>
           </div>
 
           {/* Distribution Type */}
           <div className="p-4 rounded-2xl bg-zinc-800/50 border border-white/5">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm text-zinc-400">Distribution</span>
-              <div className="group relative">
-                <Info className="h-4 w-4 text-zinc-500 cursor-help" />
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-zinc-800 border border-white/10 rounded-lg text-xs text-zinc-300 w-48 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  Uniform distributes equally across bins. Curve concentrates liquidity near the active price.
-                </div>
-              </div>
+              <span className="text-sm text-zinc-400">How to spread your liquidity</span>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => setDistribution('uniform')}
                 className={cn(
-                  'py-2 px-4 rounded-xl text-sm font-medium transition-all',
+                  'py-3 px-4 rounded-xl text-sm font-medium transition-all flex flex-col items-center gap-1',
                   distribution === 'uniform'
-                    ? 'bg-amber-500/20 text-amber-500 border border-amber-500/30'
+                    ? 'bg-dune-400/20 text-dune-400 border border-dune-400/30'
                     : 'bg-zinc-700/50 text-zinc-400 border border-transparent hover:bg-zinc-700'
                 )}
               >
-                Uniform
+                <span>Uniform</span>
+                <span className="text-xs opacity-70">Equal at all prices</span>
               </button>
               <button
                 onClick={() => setDistribution('curve')}
                 className={cn(
-                  'py-2 px-4 rounded-xl text-sm font-medium transition-all',
+                  'py-3 px-4 rounded-xl text-sm font-medium transition-all flex flex-col items-center gap-1',
                   distribution === 'curve'
-                    ? 'bg-amber-500/20 text-amber-500 border border-amber-500/30'
+                    ? 'bg-dune-400/20 text-dune-400 border border-dune-400/30'
                     : 'bg-zinc-700/50 text-zinc-400 border border-transparent hover:bg-zinc-700'
                 )}
               >
-                Curve
+                <span>Concentrated</span>
+                <span className="text-xs opacity-70">More at current price</span>
               </button>
             </div>
           </div>
@@ -249,18 +342,25 @@ export function AddLiquidityModal({ isOpen, onClose, pool }: AddLiquidityModalPr
           {/* Summary */}
           <div className="p-4 rounded-2xl bg-zinc-800/30 border border-white/5 space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-zinc-500">Active Bin</span>
-              <span className="text-white font-mono">{pool.activeId || 'Loading...'}</span>
+              <span className="text-zinc-500">Your Position</span>
+              <span className="text-white font-medium">{totalBins} price points</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-zinc-500">Total Bins</span>
-              <span className="text-white">{totalBins}</span>
+              <span className="text-zinc-500">You&apos;ll earn fees when price is between</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-zinc-500">Bin Range</span>
-              <span className="text-white">
-                {pool.activeId ? `${pool.activeId - binRange} - ${pool.activeId + binRange}` : '...'}
-              </span>
+            {pool.activeId && (
+              <div className="flex items-center justify-center py-2 px-3 rounded-lg bg-dune-400/10 border border-dune-400/20">
+                <span className="text-dune-400 font-mono text-sm">
+                  {calculatePriceFromBinId(pool.activeId - binRange, pool.binStep, pool.tokenX.decimals, pool.tokenY.decimals).toFixed(4)}
+                  {' → '}
+                  {calculatePriceFromBinId(pool.activeId + binRange, pool.binStep, pool.tokenX.decimals, pool.tokenY.decimals).toFixed(4)}
+                  {' '}{pool.tokenY.symbol}/{pool.tokenX.symbol}
+                </span>
+              </div>
+            )}
+            <div className="flex justify-between text-xs text-zinc-600 pt-1">
+              <span>Bin IDs: {pool.activeId ? `${pool.activeId - binRange} - ${pool.activeId + binRange}` : '...'}</span>
+              <span>Active: {pool.activeId || '...'}</span>
             </div>
           </div>
 
@@ -284,7 +384,7 @@ export function AddLiquidityModal({ isOpen, onClose, pool }: AddLiquidityModalPr
                 disabled={isApproving}
                 className={cn(
                   'w-full py-4 px-6 rounded-2xl font-semibold transition-all',
-                  'bg-amber-500 hover:bg-amber-400 text-black',
+                  'bg-dune-400 hover:bg-dune-300 text-black',
                   'disabled:opacity-50 disabled:cursor-not-allowed'
                 )}
               >
@@ -303,7 +403,7 @@ export function AddLiquidityModal({ isOpen, onClose, pool }: AddLiquidityModalPr
                 disabled={isApproving}
                 className={cn(
                   'w-full py-4 px-6 rounded-2xl font-semibold transition-all',
-                  'bg-amber-500 hover:bg-amber-400 text-black',
+                  'bg-dune-400 hover:bg-dune-300 text-black',
                   'disabled:opacity-50 disabled:cursor-not-allowed'
                 )}
               >
@@ -322,7 +422,7 @@ export function AddLiquidityModal({ isOpen, onClose, pool }: AddLiquidityModalPr
                 disabled={isAddingLiquidity || isConfirming || !pool.activeId}
                 className={cn(
                   'w-full py-4 px-6 rounded-2xl font-semibold transition-all',
-                  'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black',
+                  'bg-gradient-to-r from-dune-400 to-dune-500 hover:from-dune-300 hover:to-orange-400 text-black',
                   'disabled:opacity-50 disabled:cursor-not-allowed'
                 )}
               >
@@ -344,9 +444,9 @@ export function AddLiquidityModal({ isOpen, onClose, pool }: AddLiquidityModalPr
               <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
               <span className="text-emerald-400 text-sm flex-1">Liquidity added successfully!</span>
               {xpEarned > 0 && (
-                <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-500/20 border border-amber-500/30">
-                  <Sparkles className="h-3 w-3 text-amber-500" />
-                  <span className="text-amber-500 font-bold text-sm">+{xpEarned} XP</span>
+                <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-dune-400/20 border border-dune-400/30">
+                  <Sparkles className="h-3 w-3 text-dune-400" />
+                  <span className="text-dune-400 font-bold text-sm">+{xpEarned} XP</span>
                 </div>
               )}
             </div>
@@ -387,7 +487,7 @@ function TokenAmountInput({ token, amount, balance, onChange, insufficientBalanc
         </div>
         <button
           onClick={() => onChange(formatAmount(balance, token.decimals, token.decimals))}
-          className="text-sm text-zinc-500 hover:text-amber-500 transition-colors"
+          className="text-sm text-zinc-500 hover:text-dune-400 transition-colors"
         >
           Max: {formatAmount(balance, token.decimals)}
         </button>

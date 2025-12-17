@@ -53,8 +53,8 @@ export function PoolAnalytics() {
       <div className="glass-card rounded-2xl p-8 text-center">
         <div className="inline-flex items-center justify-center">
           <div className="relative">
-            <div className="h-10 w-10 rounded-full border-4 border-amber-500/20" />
-            <div className="absolute inset-0 h-10 w-10 rounded-full border-4 border-amber-500 border-t-transparent animate-spin" />
+            <div className="h-10 w-10 rounded-full border-4 border-dune-400/20" />
+            <div className="absolute inset-0 h-10 w-10 rounded-full border-4 border-dune-400 border-t-transparent animate-spin" />
           </div>
         </div>
         <p className="mt-4 text-zinc-500">Loading pool data...</p>
@@ -91,7 +91,7 @@ export function PoolAnalytics() {
             className={cn(
               'px-4 py-2 rounded-xl flex items-center gap-2 transition-all',
               selectedPoolIndex === index
-                ? 'bg-amber-500/20 border border-amber-500/40 text-amber-500'
+                ? 'bg-dune-400/20 border border-dune-400/40 text-dune-400'
                 : 'bg-zinc-800/50 border border-white/5 text-zinc-400 hover:text-white hover:border-white/10'
             )}
           >
@@ -112,7 +112,7 @@ export function PoolAnalytics() {
         {/* Pool Stats */}
         <div className="glass-card rounded-2xl p-5">
           <h4 className="font-semibold text-white mb-4 flex items-center gap-2">
-            <Activity className="h-4 w-4 text-amber-500" />
+            <Activity className="h-4 w-4 text-dune-400" />
             Pool Statistics
           </h4>
 
@@ -162,7 +162,7 @@ export function PoolAnalytics() {
         {/* Liquidity Distribution Chart */}
         <div className="glass-card rounded-2xl p-5">
           <h4 className="font-semibold text-white mb-4 flex items-center gap-2">
-            <Droplets className="h-4 w-4 text-amber-500" />
+            <Droplets className="h-4 w-4 text-dune-400" />
             Liquidity Distribution
           </h4>
 
@@ -186,7 +186,7 @@ export function PoolAnalytics() {
                     className={cn(
                       'absolute bottom-0 w-full rounded-t transition-all duration-200',
                       bin.isActive
-                        ? 'bg-amber-500'
+                        ? 'bg-dune-400'
                         : bin.id < selectedPool.activeId
                         ? 'bg-emerald-500/60 group-hover:bg-emerald-500'
                         : 'bg-blue-500/60 group-hover:bg-blue-500'
@@ -215,7 +215,7 @@ export function PoolAnalytics() {
                   <span className="text-zinc-500">{selectedPool.tokenY.symbol}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded bg-amber-500" />
+                  <div className="w-3 h-3 rounded bg-dune-400" />
                   <span className="text-zinc-500">Active</span>
                 </div>
                 <div className="flex items-center gap-1">

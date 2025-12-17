@@ -11,18 +11,18 @@ export default function DocsPage() {
       <div className="relative overflow-hidden">
         {/* Background glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-radial from-amber-500/20 via-orange-500/5 to-transparent rounded-full blur-3xl" />
+          <div className="absolute inset-0 bg-gradient-radial from-dune-400/20 via-dune-500/5 to-transparent rounded-full blur-3xl" />
         </div>
 
         <div className="relative z-10 text-center pt-12 pb-16 px-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 mb-6">
-            <Sun className="h-4 w-4 text-amber-500" />
-            <span className="text-sm font-medium text-amber-400">Documentation</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-dune-400/10 to-dune-500/10 border border-dune-400/20 mb-6">
+            <Sun className="h-4 w-4 text-dune-400" />
+            <span className="text-sm font-medium text-dune-300">Documentation</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
             <span className="text-white">Welcome to </span>
-            <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-dune-300 via-dune-500 to-dune-400 bg-clip-text text-transparent">
               Helios DEX
             </span>
           </h1>
@@ -35,14 +35,14 @@ export default function DocsPage() {
           <div className="flex items-center justify-center gap-4">
             <Link
               href="/"
-              className="group flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-black font-bold hover:from-amber-400 hover:to-orange-400 transition-all duration-300 shadow-lg shadow-amber-500/25"
+              className="group flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-dune-400 to-dune-500 text-black font-bold hover:from-dune-300 hover:to-orange-400 transition-all duration-300 shadow-lg shadow-dune-400/25"
             >
               Launch App
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href="/pools"
-              className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-zinc-800/80 border border-white/10 text-white font-medium hover:bg-zinc-700/80 hover:border-amber-500/30 transition-all"
+              className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-zinc-800/80 border border-white/10 text-white font-medium hover:bg-zinc-700/80 hover:border-dune-400/30 transition-all"
             >
               View Pools
             </Link>
@@ -71,25 +71,25 @@ export default function DocsPage() {
             icon={<Layers className="h-6 w-6" />}
             title="Concentrated Liquidity"
             description="Unlike traditional AMMs, Helios uses discrete price bins. Liquidity providers can concentrate capital in specific price ranges for up to 100x better capital efficiency."
-            gradient="from-amber-500 to-yellow-500"
+            gradient="from-dune-400 to-yellow-500"
           />
           <FeatureCard
             icon={<Shield className="h-6 w-6" />}
             title="FTSO Oracle Integration"
             description="Native integration with Flare Time Series Oracle provides accurate, decentralized price feeds for reliable trading and accurate price discovery."
-            gradient="from-orange-500 to-amber-500"
+            gradient="from-dune-500 to-dune-400"
           />
           <FeatureCard
             icon={<Zap className="h-6 w-6" />}
             title="Sub-Second Finality"
             description="Built on Flare Network fast consensus, trades confirm in under a second. No more waiting for block confirmations."
-            gradient="from-red-500 to-orange-500"
+            gradient="from-red-500 to-dune-500"
           />
           <FeatureCard
             icon={<RefreshCw className="h-6 w-6" />}
             title="Auto-Compounding Fees"
             description="Trading fees earned by your liquidity position automatically compound, growing your position without any manual action required."
-            gradient="from-amber-500 to-orange-500"
+            gradient="from-dune-400 to-dune-500"
           />
         </div>
       </Section>
@@ -192,11 +192,11 @@ export default function DocsPage() {
               </p>
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 rounded-xl bg-zinc-800/50 border border-white/5">
-                  <div className="text-amber-500 font-bold mb-1">Uniform</div>
+                  <div className="text-dune-400 font-bold mb-1">Uniform</div>
                   <div className="text-xs text-zinc-500">Equal liquidity across all bins in range</div>
                 </div>
                 <div className="p-3 rounded-xl bg-zinc-800/50 border border-white/5">
-                  <div className="text-amber-500 font-bold mb-1">Curve</div>
+                  <div className="text-dune-400 font-bold mb-1">Curve</div>
                   <div className="text-xs text-zinc-500">Concentrated around current price</div>
                 </div>
               </div>
@@ -268,8 +268,8 @@ export default function DocsPage() {
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20">
-            <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-black mb-4">
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-dune-400/10 to-dune-500/10 border border-dune-400/20">
+            <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-dune-400 to-dune-500 text-black mb-4">
               <Flame className="h-6 w-6" />
             </div>
             <h3 className="font-bold text-white mb-2 text-lg">FlareDrops</h3>
@@ -299,7 +299,7 @@ export default function DocsPage() {
         <div className="space-y-6">
           <div className="p-6 rounded-2xl bg-zinc-900/50 border border-white/5">
             <h3 className="font-bold text-white mb-4 text-lg flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500 text-sm font-bold">1</div>
+              <div className="w-8 h-8 rounded-full bg-dune-400/20 flex items-center justify-center text-dune-400 text-sm font-bold">1</div>
               Price Bins
             </h3>
             <p className="text-zinc-400 mb-4">
@@ -309,7 +309,7 @@ export default function DocsPage() {
               {[...Array(7)].map((_, i) => (
                 <div
                   key={i}
-                  className={`shrink-0 w-12 rounded-lg ${i === 3 ? 'h-20 bg-gradient-to-t from-amber-500 to-orange-500' : 'h-12 bg-zinc-700'}`}
+                  className={`shrink-0 w-12 rounded-lg ${i === 3 ? 'h-20 bg-gradient-to-t from-dune-400 to-dune-500' : 'h-12 bg-zinc-700'}`}
                 />
               ))}
             </div>
@@ -318,7 +318,7 @@ export default function DocsPage() {
 
           <div className="p-6 rounded-2xl bg-zinc-900/50 border border-white/5">
             <h3 className="font-bold text-white mb-4 text-lg flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500 text-sm font-bold">2</div>
+              <div className="w-8 h-8 rounded-full bg-dune-400/20 flex items-center justify-center text-dune-400 text-sm font-bold">2</div>
               Bin Step
             </h3>
             <p className="text-zinc-400">
@@ -328,7 +328,7 @@ export default function DocsPage() {
 
           <div className="p-6 rounded-2xl bg-zinc-900/50 border border-white/5">
             <h3 className="font-bold text-white mb-4 text-lg flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500 text-sm font-bold">3</div>
+              <div className="w-8 h-8 rounded-full bg-dune-400/20 flex items-center justify-center text-dune-400 text-sm font-bold">3</div>
               Zero Slippage Within Bins
             </h3>
             <p className="text-zinc-400">
@@ -345,14 +345,14 @@ export default function DocsPage() {
         description="Currently available on Coston2 Testnet"
       >
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <TokenCard symbol="WFLR" name="Wrapped Flare" color="from-amber-500 to-orange-500" />
+          <TokenCard symbol="WFLR" name="Wrapped Flare" color="from-dune-400 to-dune-500" />
           <TokenCard symbol="sFLR" name="Staked Flare" color="from-purple-500 to-pink-500" />
           <TokenCard symbol="USDT" name="Tether USD" color="from-green-500 to-emerald-500" />
           <TokenCard symbol="USDC" name="USD Coin" color="from-blue-500 to-cyan-500" />
         </div>
 
-        <div className="mt-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
-          <p className="text-sm text-amber-200">
+        <div className="mt-6 p-4 rounded-xl bg-dune-400/10 border border-dune-400/20">
+          <p className="text-sm text-dune-200">
             <span className="font-bold">Testnet Mode:</span> Get test tokens from the faucet on the home page to try out all features risk-free.
           </p>
         </div>
@@ -390,10 +390,10 @@ export default function DocsPage() {
 
       {/* CTA */}
       <div className="max-w-3xl mx-auto px-4 mt-16">
-        <div className="relative p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/20 text-center overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl" />
+        <div className="relative p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-dune-400/20 via-dune-500/10 to-transparent border border-dune-400/20 text-center overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-dune-400/10 rounded-full blur-3xl" />
           <div className="relative z-10">
-            <Flame className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+            <Flame className="h-12 w-12 text-dune-400 mx-auto mb-4" />
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
               Ready to Trade?
             </h2>
@@ -402,7 +402,7 @@ export default function DocsPage() {
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-black font-bold hover:from-amber-400 hover:to-orange-400 transition-all duration-300 shadow-lg shadow-amber-500/25"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-dune-400 to-dune-500 text-black font-bold hover:from-dune-300 hover:to-orange-400 transition-all duration-300 shadow-lg shadow-dune-400/25"
             >
               Launch App
               <ArrowRight className="h-5 w-5" />
@@ -429,7 +429,7 @@ function Section({
     <div className="max-w-5xl mx-auto px-4 mb-16">
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800/80 border border-white/10 mb-4">
-          <span className="text-xs font-medium text-amber-400">{badge}</span>
+          <span className="text-xs font-medium text-dune-300">{badge}</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">{title}</h2>
         <p className="text-zinc-500 max-w-lg mx-auto">{description}</p>
@@ -442,7 +442,7 @@ function Section({
 function StatCard({ value, label, icon }: { value: string; label: string; icon: React.ReactNode }) {
   return (
     <div className="p-4 sm:p-6 rounded-2xl bg-zinc-900/50 border border-white/5 text-center">
-      <div className="text-amber-500 mb-2 flex justify-center">{icon}</div>
+      <div className="text-dune-400 mb-2 flex justify-center">{icon}</div>
       <div className="text-2xl sm:text-3xl font-bold text-white mb-1">{value}</div>
       <div className="text-xs sm:text-sm text-zinc-500">{label}</div>
     </div>
@@ -461,7 +461,7 @@ function FeatureCard({
   gradient: string
 }) {
   return (
-    <div className="p-6 rounded-2xl bg-zinc-900/50 border border-white/5 hover:border-amber-500/20 transition-all duration-300">
+    <div className="p-6 rounded-2xl bg-zinc-900/50 border border-white/5 hover:border-dune-400/20 transition-all duration-300">
       <div className={`inline-flex items-center justify-center p-3 rounded-2xl bg-gradient-to-br ${gradient} text-black mb-4`}>
         {icon}
       </div>
@@ -485,12 +485,12 @@ function ExpandableCard({
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="rounded-2xl bg-zinc-900/50 border border-white/5 hover:border-amber-500/20 transition-all duration-300 overflow-hidden">
+    <div className="rounded-2xl bg-zinc-900/50 border border-white/5 hover:border-dune-400/20 transition-all duration-300 overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full p-5 flex items-center gap-4 text-left"
       >
-        <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-500 shrink-0">
+        <div className="p-2.5 rounded-xl bg-dune-400/10 text-dune-400 shrink-0">
           {icon}
         </div>
         <div className="flex-1 min-w-0">
@@ -525,7 +525,7 @@ function TokenCard({ symbol, name, color }: { symbol: string; name: string; colo
 function StepCard({ number, title, description }: { number: number; title: string; description: string }) {
   return (
     <div className="p-5 rounded-2xl bg-zinc-900/50 border border-white/5">
-      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-black font-bold mb-3">
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-dune-400 to-dune-500 flex items-center justify-center text-black font-bold mb-3">
         {number}
       </div>
       <h3 className="font-bold text-white mb-1">{title}</h3>

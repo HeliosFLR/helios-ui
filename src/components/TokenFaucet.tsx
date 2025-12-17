@@ -57,7 +57,7 @@ export function TokenFaucet() {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 text-amber-500 hover:border-amber-500/40 transition-all group"
+        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-dune-400/10 to-dune-500/10 border border-dune-400/20 text-dune-400 hover:border-dune-400/40 transition-all group"
       >
         <Coins className="h-4 w-4 group-hover:animate-bounce" />
         <span className="text-sm font-medium">Get Test Tokens</span>
@@ -74,7 +74,7 @@ export function TokenFaucet() {
             {/* Header */}
             <div className="p-6 border-b border-white/5">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-dune-400 to-dune-500">
                   <Droplets className="h-5 w-5 text-black" />
                 </div>
                 <div>
@@ -111,7 +111,7 @@ export function TokenFaucet() {
               {/* Info */}
               <div className="mt-6 p-4 rounded-xl bg-zinc-800/30 border border-white/5">
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                  <AlertCircle className="h-5 w-5 text-dune-400 shrink-0 mt-0.5" />
                   <div className="text-sm text-zinc-400 space-y-2">
                     <p>These are test tokens on Coston2 testnet.</p>
                     <p>
@@ -120,7 +120,7 @@ export function TokenFaucet() {
                         href="https://faucet.flare.network/coston2"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-amber-500 hover:text-amber-400 inline-flex items-center gap-1"
+                        className="text-dune-400 hover:text-dune-300 inline-flex items-center gap-1"
                       >
                         Get C2FLR here
                         <ExternalLink className="h-3 w-3" />
@@ -186,7 +186,7 @@ function FaucetTokenRow({
         ? 'bg-emerald-500/5 border-emerald-500/30'
         : error
           ? 'bg-red-500/5 border-red-500/30'
-          : 'bg-zinc-800/30 border-white/5 hover:border-amber-500/20'
+          : 'bg-zinc-800/30 border-white/5 hover:border-dune-400/20'
     )}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -206,7 +206,7 @@ function FaucetTokenRow({
               ? 'bg-emerald-500/20 text-emerald-500'
               : error
                 ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
-                : 'bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed'
+                : 'bg-dune-400/10 text-dune-400 hover:bg-dune-400/20 disabled:opacity-50 disabled:cursor-not-allowed'
           )}
         >
           {isLoading ? (
@@ -244,7 +244,7 @@ export function FaucetButton() {
     <>
       <button
         onClick={() => setShowFaucet(true)}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 transition-colors"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-dune-400/10 text-dune-400 hover:bg-dune-400/20 transition-colors"
       >
         <Coins className="h-3.5 w-3.5" />
         Faucet
@@ -289,7 +289,7 @@ function TokenFaucetModal({ onClose }: { onClose: () => void }) {
       <div className="relative w-full max-w-md glass-card rounded-3xl shadow-2xl overflow-hidden animate-bounce-in">
         <div className="p-6 border-b border-white/5">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-dune-400 to-dune-500">
               <Droplets className="h-5 w-5 text-black" />
             </div>
             <div>

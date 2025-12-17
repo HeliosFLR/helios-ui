@@ -16,7 +16,7 @@ export function FTSOPriceDisplay({ symbol = 'WFLR', className, compact = false }
   if (compact) {
     return (
       <div className={cn('flex items-center gap-2 text-sm', className)}>
-        <Flame className="h-4 w-4 text-amber-500" />
+        <Flame className="h-4 w-4 text-dune-400" />
         <span className="text-zinc-400">FLR:</span>
         <span className="text-white font-mono">
           {isLoading ? '...' : formatUSDPrice(price)}
@@ -33,8 +33,8 @@ export function FTSOPriceDisplay({ symbol = 'WFLR', className, compact = false }
       )}
     >
       <div className="flex items-center gap-2">
-        <div className="p-1.5 rounded-lg bg-amber-500/10">
-          <TrendingUp className="h-4 w-4 text-amber-500" />
+        <div className="p-1.5 rounded-lg bg-dune-400/10">
+          <TrendingUp className="h-4 w-4 text-dune-400" />
         </div>
         <div>
           <div className="flex items-center gap-2">
@@ -64,9 +64,9 @@ export function FTSOPriceBadge() {
   const { price, isLoading } = useFTSOPrice('WFLR')
 
   return (
-    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20">
-      <Flame className="h-3.5 w-3.5 text-amber-500" />
-      <span className="text-xs font-medium text-amber-400">
+    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-dune-400/10 border border-dune-400/20">
+      <Flame className="h-3.5 w-3.5 text-dune-400" />
+      <span className="text-xs font-medium text-dune-300">
         FLR {isLoading ? '...' : formatUSDPrice(price)}
       </span>
     </div>

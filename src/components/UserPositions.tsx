@@ -7,7 +7,7 @@ import { TokenIcon } from './TokenSelector'
 import { RemoveLiquidityModal } from './RemoveLiquidityModal'
 import { AddLiquidityModal } from './AddLiquidityModal'
 import { RebalanceModal } from './RebalanceModal'
-import { calculatePriceFromBinId, cn } from '@/lib/utils'
+import { calculatePriceFromBinId, cn, formatAmount } from '@/lib/utils'
 import {
   Wallet,
   TrendingUp,
@@ -22,6 +22,9 @@ import {
   RefreshCw,
   Flame,
   Gift,
+  DollarSign,
+  Target,
+  X,
 } from 'lucide-react'
 import type { Token } from '@/config/contracts'
 
@@ -46,8 +49,8 @@ export function UserPositions() {
   if (!isConnected) {
     return (
       <div className="glass-card rounded-2xl p-8 text-center">
-        <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 mb-4">
-          <Wallet className="h-8 w-8 text-amber-500" />
+        <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-gradient-to-br from-dune-400/20 to-dune-500/20 mb-4">
+          <Wallet className="h-8 w-8 text-dune-400" />
         </div>
         <h3 className="text-lg font-semibold text-white mb-2">Connect Wallet</h3>
         <p className="text-zinc-500 text-sm">
@@ -62,8 +65,8 @@ export function UserPositions() {
       <div className="glass-card rounded-2xl p-8 text-center">
         <div className="inline-flex items-center justify-center">
           <div className="relative">
-            <div className="h-12 w-12 rounded-full border-4 border-amber-500/20" />
-            <div className="absolute inset-0 h-12 w-12 rounded-full border-4 border-amber-500 border-t-transparent animate-spin" />
+            <div className="h-12 w-12 rounded-full border-4 border-dune-400/20" />
+            <div className="absolute inset-0 h-12 w-12 rounded-full border-4 border-dune-400 border-t-transparent animate-spin" />
           </div>
         </div>
         <p className="mt-4 text-zinc-500">Loading your positions...</p>
@@ -83,7 +86,7 @@ export function UserPositions() {
         </p>
         <a
           href="/pools"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-black font-medium hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-dune-400 to-dune-500 text-black font-medium hover:opacity-90 transition-opacity"
         >
           <Plus className="h-4 w-4" />
           Add Liquidity
@@ -121,24 +124,35 @@ export function UserPositions() {
     }
   }
 
+  // Separate limit orders (single-bin positions) from LP positions (multi-bin)
+  const limitOrders = positions.filter(p => p.bins.length === 1)
+  const lpPositions = positions.filter(p => p.bins.length > 1)
+
   return (
     <div className="space-y-6">
       {/* Refresh indicator */}
       {isFetching && (
         <div className="flex items-center justify-center gap-2 py-2 text-xs text-zinc-500">
-          <RefreshCw className="h-3 w-3 animate-spin text-amber-500" />
+          <RefreshCw className="h-3 w-3 animate-spin text-dune-400" />
           <span>Refreshing positions...</span>
         </div>
       )}
 
       {/* Header Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="glass-card rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Activity className="h-4 w-4 text-amber-500" />
-            <span className="text-xs text-zinc-500 uppercase tracking-wider">Total Positions</span>
+            <Activity className="h-4 w-4 text-dune-400" />
+            <span className="text-xs text-zinc-500 uppercase tracking-wider">LP Positions</span>
           </div>
-          <div className="text-2xl font-bold text-white">{positions.length}</div>
+          <div className="text-2xl font-bold text-white">{lpPositions.length}</div>
+        </div>
+        <div className="glass-card rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Target className="h-4 w-4 text-purple-400" />
+            <span className="text-xs text-zinc-500 uppercase tracking-wider">Limit Orders</span>
+          </div>
+          <div className="text-2xl font-bold text-white">{limitOrders.length}</div>
         </div>
         <div className="glass-card rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2">
@@ -149,27 +163,53 @@ export function UserPositions() {
             {positions.reduce((acc, p) => acc + p.bins.length, 0)}
           </div>
         </div>
-        <div className="glass-card rounded-xl p-4 col-span-2 sm:col-span-1">
+        <div className="glass-card rounded-xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="h-4 w-4 text-amber-500" />
+            <Sparkles className="h-4 w-4 text-dune-400" />
             <span className="text-xs text-zinc-500 uppercase tracking-wider">Pools</span>
           </div>
-          <div className="text-2xl font-bold text-white">{positions.length}</div>
+          <div className="text-2xl font-bold text-white">{new Set(positions.map(p => p.poolAddress)).size}</div>
         </div>
       </div>
 
-      {/* Position Cards */}
-      <div className="space-y-4">
-        {positions.map((position) => (
-          <PositionCard
-            key={position.poolAddress}
-            position={position}
-            onAddLiquidity={() => handleAddLiquidity(position)}
-            onRemoveLiquidity={() => handleRemoveLiquidity(position)}
-            onRebalance={() => handleRebalance(position)}
-          />
-        ))}
-      </div>
+      {/* Limit Orders Section */}
+      {limitOrders.length > 0 && (
+        <div className="glass-card rounded-2xl overflow-hidden">
+          <div className="p-4 border-b border-white/5 flex items-center gap-3">
+            <Target className="h-5 w-5 text-purple-400" />
+            <h3 className="font-semibold text-white">Active Limit Orders</h3>
+            <span className="text-xs text-zinc-500">({limitOrders.length})</span>
+          </div>
+          <div className="divide-y divide-white/5">
+            {limitOrders.map((order) => (
+              <LimitOrderRow
+                key={`${order.poolAddress}-${order.bins[0]?.binId}`}
+                order={order}
+                onCancel={() => handleRemoveLiquidity(order)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* LP Position Cards */}
+      {lpPositions.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Droplets className="h-5 w-5 text-dune-400" />
+            <h3 className="font-semibold text-white">Liquidity Positions</h3>
+          </div>
+          {lpPositions.map((position) => (
+            <PositionCard
+              key={position.poolAddress}
+              position={position}
+              onAddLiquidity={() => handleAddLiquidity(position)}
+              onRemoveLiquidity={() => handleRemoveLiquidity(position)}
+              onRebalance={() => handleRebalance(position)}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Modals */}
       {selectedPosition && (
@@ -233,6 +273,20 @@ function PositionCard({
   const minBin = Math.min(...position.bins.map(b => b.binId))
   const maxBin = Math.max(...position.bins.map(b => b.binId))
 
+  // Calculate price range from bin IDs
+  const minPrice = calculatePriceFromBinId(
+    minBin,
+    position.binStep,
+    position.tokenX.decimals,
+    position.tokenY.decimals
+  )
+  const maxPrice = calculatePriceFromBinId(
+    maxBin,
+    position.binStep,
+    position.tokenX.decimals,
+    position.tokenY.decimals
+  )
+
   // Check if position is in range
   const inRange = position.bins.some(b => b.isActive)
 
@@ -258,7 +312,7 @@ function PositionCard({
               {position.tokenX.symbol}/{position.tokenY.symbol}
             </div>
             <div className="flex items-center gap-2 text-sm flex-wrap">
-              <span className="px-2 py-0.5 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-medium">
+              <span className="px-2 py-0.5 rounded-lg bg-dune-400/10 text-dune-400 text-xs font-medium">
                 {position.binStep / 100}% fee
               </span>
               <span className={cn(
@@ -280,21 +334,39 @@ function PositionCard({
         </div>
 
         {/* Position Stats */}
-        <div className="flex-1 grid grid-cols-3 gap-4 text-left hidden sm:grid">
+        <div className="flex-1 grid grid-cols-2 lg:grid-cols-4 gap-4 text-left hidden sm:grid">
+          {/* Position Value - Most Important */}
           <div>
-            <div className="text-xs text-zinc-500 mb-1">Bins</div>
-            <div className="text-white font-medium">{position.bins.length}</div>
-          </div>
-          <div>
-            <div className="text-xs text-zinc-500 mb-1">Range</div>
-            <div className="text-white font-mono text-sm">
-              {minBin} - {maxBin}
+            <div className="text-xs text-zinc-500 mb-1 flex items-center gap-1">
+              <DollarSign className="h-3 w-3" />
+              Position Value
+            </div>
+            <div className="text-white font-bold text-lg">
+              {formatAmount(position.totalAmountX, position.tokenX.decimals, 2)} {position.tokenX.symbol}
+            </div>
+            <div className="text-zinc-400 text-sm">
+              {formatAmount(position.totalAmountY, position.tokenY.decimals, 2)} {position.tokenY.symbol}
             </div>
           </div>
           <div>
+            <div className="text-xs text-zinc-500 mb-1">Price Range</div>
+            <div className="text-white font-mono text-sm">
+              {minPrice.toFixed(4)} - {maxPrice.toFixed(4)}
+            </div>
+            <div className="text-xs text-zinc-600">
+              {position.bins.length} bins
+            </div>
+          </div>
+          <div className="hidden lg:block">
             <div className="text-xs text-zinc-500 mb-1">Current Price</div>
             <div className="text-white font-mono text-sm">
               {price.toFixed(4)}
+            </div>
+          </div>
+          <div className="hidden lg:block">
+            <div className="text-xs text-zinc-500 mb-1">Bin IDs</div>
+            <div className="text-zinc-400 font-mono text-xs">
+              {minBin} - {maxBin}
             </div>
           </div>
         </div>
@@ -302,7 +374,7 @@ function PositionCard({
         {/* Expand */}
         <div className={cn(
           'p-2 rounded-xl transition-all',
-          isExpanded ? 'bg-amber-500/10 text-amber-500' : 'text-zinc-500'
+          isExpanded ? 'bg-dune-400/10 text-dune-400' : 'text-zinc-500'
         )}>
           {isExpanded ? (
             <ChevronUp className="h-5 w-5" />
@@ -329,26 +401,44 @@ function PositionCard({
               <div className="text-xs text-zinc-500 mb-2 uppercase tracking-wider">
                 Your Bins ({position.bins.length})
               </div>
-              <div className="max-h-40 overflow-y-auto space-y-1">
-                {position.bins.map((bin) => (
-                  <div
-                    key={bin.binId}
-                    className={cn(
-                      'flex items-center justify-between p-2 rounded-lg text-sm',
-                      bin.isActive ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-zinc-800/50'
-                    )}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-white">#{bin.binId}</span>
-                      {bin.isActive && (
-                        <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              <div className="max-h-48 overflow-y-auto space-y-1">
+                {position.bins.map((bin) => {
+                  const binPrice = calculatePriceFromBinId(
+                    bin.binId,
+                    position.binStep,
+                    position.tokenX.decimals,
+                    position.tokenY.decimals
+                  )
+                  return (
+                    <div
+                      key={bin.binId}
+                      className={cn(
+                        'flex items-center justify-between p-2.5 rounded-lg text-sm',
+                        bin.isActive ? 'bg-dune-400/10 border border-dune-400/20' : 'bg-zinc-800/50'
                       )}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex flex-col">
+                          <span className="font-mono text-white">@ {binPrice.toFixed(4)}</span>
+                          <span className="font-mono text-zinc-600 text-xs">Bin #{bin.binId}</span>
+                        </div>
+                        {bin.isActive && (
+                          <span className="px-1.5 py-0.5 rounded bg-dune-400/20 text-dune-400 text-xs font-medium">
+                            Active
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <div className="text-white text-sm">
+                          {formatAmount(bin.amountX, position.tokenX.decimals, 4)} {position.tokenX.symbol}
+                        </div>
+                        <div className="text-zinc-500 text-xs">
+                          {formatAmount(bin.amountY, position.tokenY.decimals, 4)} {position.tokenY.symbol}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-zinc-400">
-                      {bin.share.toFixed(2)}% share
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
 
@@ -358,7 +448,7 @@ function PositionCard({
                 href={`https://coston2-explorer.flare.network/address/${position.poolAddress}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-amber-500 hover:text-amber-400 flex items-center gap-1"
+                className="text-sm text-dune-400 hover:text-dune-300 flex items-center gap-1"
               >
                 View Pool Contract
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -374,7 +464,7 @@ function PositionCard({
                   "flex-1 min-w-[140px] py-3 px-4 rounded-xl font-medium transition-all flex items-center justify-center gap-2",
                   inRange
                     ? "bg-zinc-700/50 text-zinc-300 hover:bg-zinc-700 border border-zinc-600"
-                    : "bg-gradient-to-r from-amber-500 to-orange-500 text-black hover:opacity-90 animate-pulse-glow"
+                    : "bg-gradient-to-r from-dune-400 to-dune-500 text-black hover:opacity-90 animate-pulse-glow"
                 )}
               >
                 <RefreshCw className={cn("h-4 w-4", !inRange && "animate-spin-slow")} />
@@ -430,7 +520,7 @@ function BinVisualization({ position }: { position: UserPosition }) {
               'w-full rounded-t transition-all',
               bin.hasLiquidity
                 ? bin.isActive
-                  ? 'bg-amber-500 h-full'
+                  ? 'bg-dune-400 h-full'
                   : bin.binId < position.activeId
                   ? 'bg-emerald-500/60 h-3/4'
                   : 'bg-blue-500/60 h-3/4'
@@ -439,11 +529,110 @@ function BinVisualization({ position }: { position: UserPosition }) {
           />
           {bin.isActive && (
             <div className="absolute -bottom-4 left-1/2 -translate-x-1/2">
-              <div className="w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-amber-500" />
+              <div className="w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-dune-400" />
             </div>
           )}
         </div>
       ))}
+    </div>
+  )
+}
+
+// Limit Order Row Component
+function LimitOrderRow({
+  order,
+  onCancel,
+}: {
+  order: UserPosition
+  onCancel: () => void
+}) {
+  const bin = order.bins[0]
+  if (!bin) return null
+
+  const triggerPrice = calculatePriceFromBinId(
+    bin.binId,
+    order.binStep,
+    order.tokenX.decimals,
+    order.tokenY.decimals
+  )
+
+  const currentPrice = calculatePriceFromBinId(
+    order.activeId,
+    order.binStep,
+    order.tokenX.decimals,
+    order.tokenY.decimals
+  )
+
+  // Determine order type based on bin position relative to active
+  const isBuyOrder = bin.binId < order.activeId
+  const priceDiff = ((triggerPrice - currentPrice) / currentPrice * 100).toFixed(2)
+
+  // Calculate how far from trigger
+  const binsAway = Math.abs(bin.binId - order.activeId)
+
+  return (
+    <div className="p-4 flex items-center gap-4 hover:bg-white/[0.02] transition-all">
+      {/* Order Type */}
+      <div className={cn(
+        'px-3 py-1.5 rounded-lg text-xs font-bold uppercase',
+        isBuyOrder
+          ? 'bg-emerald-500/20 text-emerald-500'
+          : 'bg-red-500/20 text-red-400'
+      )}>
+        {isBuyOrder ? 'Buy' : 'Sell'}
+      </div>
+
+      {/* Pair */}
+      <div className="flex items-center gap-2 min-w-[100px]">
+        <div className="flex -space-x-2">
+          <TokenIcon symbol={order.tokenX.symbol} size="sm" />
+          <TokenIcon symbol={order.tokenY.symbol} size="sm" />
+        </div>
+        <span className="text-sm text-white font-medium">
+          {order.tokenX.symbol}/{order.tokenY.symbol}
+        </span>
+      </div>
+
+      {/* Trigger Price */}
+      <div className="flex-1">
+        <div className="text-xs text-zinc-500 mb-0.5">Trigger Price</div>
+        <div className="text-white font-mono text-sm">{triggerPrice.toFixed(6)}</div>
+        <div className="text-xs text-zinc-600">
+          {parseFloat(priceDiff) >= 0 ? '+' : ''}{priceDiff}% from current
+        </div>
+      </div>
+
+      {/* Amount */}
+      <div className="flex-1 text-right">
+        <div className="text-xs text-zinc-500 mb-0.5">Amount</div>
+        <div className="text-white font-mono text-sm">
+          {formatAmount(order.totalAmountX, order.tokenX.decimals, 4)} {order.tokenX.symbol}
+        </div>
+        <div className="text-zinc-500 font-mono text-xs">
+          {formatAmount(order.totalAmountY, order.tokenY.decimals, 4)} {order.tokenY.symbol}
+        </div>
+      </div>
+
+      {/* Status */}
+      <div className="text-center">
+        <div className={cn(
+          'px-2 py-1 rounded-lg text-xs font-medium',
+          binsAway <= 5
+            ? 'bg-dune-400/20 text-dune-400'
+            : 'bg-zinc-800 text-zinc-400'
+        )}>
+          {binsAway <= 5 ? 'Near trigger' : `${binsAway} bins away`}
+        </div>
+      </div>
+
+      {/* Cancel Button */}
+      <button
+        onClick={onCancel}
+        className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+        title="Cancel order"
+      >
+        <X className="h-4 w-4" />
+      </button>
     </div>
   )
 }

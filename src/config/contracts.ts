@@ -3,8 +3,8 @@ import { isMainnet } from './chains'
 // Contract addresses per network
 const TESTNET_CONTRACTS = {
   LB_FACTORY: '0xdbfD526E99E458EA640b524cbC671650Be29aFD1' as const,
-  LB_ROUTER: '0xe62c4c776A79cBF66426519f282121684Be4fCdE' as const,
-  LB_QUOTER: '0xeD0015D2d92fFbeE894f55645dDb4078dFEbE30d' as const,
+  LB_ROUTER: '0x39883bb80737ADeC305dE54e5BF16466862e6992' as const,
+  LB_QUOTER: '0xBB40204e7DEEdF6209D5DD8B4dFf7A9ba12c88aB' as const,
 }
 
 // Mainnet contracts (to be deployed)
@@ -27,39 +27,47 @@ export interface Token {
 // All testnet tokens (for faucet, pools display, positions)
 const TESTNET_ALL_TOKENS: Token[] = [
   {
-    address: '0x2b8aD1d8f130881d9b23Cb523E2Bccc996f11B4e',
-    symbol: 'WFLR',
-    name: 'Wrapped Flare',
+    address: '0xC67DCE33D7A8efA5FfEB961899C73fe01bCe9273',
+    symbol: 'WC2FLR',
+    name: 'Wrapped C2FLR',
     decimals: 18,
     logoUrl: '/tokens/wflr.png',
   },
   {
+    address: '0xC1A5B41512496B80903D1f32d6dEa3a73212E71F',
+    symbol: 'USDT0',
+    name: 'Test USDT',
+    decimals: 6,
+    logoUrl: '/tokens/usdt.png',
+  },
+  {
+    address: '0x0b6A3645c240605887a5532109323A3E12273dc7',
+    symbol: 'FXRP',
+    name: 'FTestXRP',
+    decimals: 18,
+    logoUrl: '/tokens/xrp.png',
+  },
+  {
     address: '0xfB864E898bBc04D1df1a1BCa381BbaefD511fB2A',
     symbol: 'USDT',
-    name: 'Tether USD',
+    name: 'Mock USDT',
     decimals: 6,
     logoUrl: '/tokens/usdt.png',
   },
   {
     address: '0x5dcA2A1539c2C36335F4B14D0437C1e4065C8434',
     symbol: 'USDC',
-    name: 'USD Coin',
+    name: 'Mock USDC',
     decimals: 6,
     logoUrl: '/tokens/usdc.png',
   },
-  {
-    address: '0xf2F8BDfd3A216f684756768160cb3BFdF26b03f0',
-    symbol: 'sFLR',
-    name: 'Staked Flare',
-    decimals: 18,
-    logoUrl: '/tokens/sflr.webp',
-  },
 ]
 
-// Tokens available for swapping (only same-decimal pairs work due to LB bug)
+// Tokens available for swapping
 const TESTNET_SWAP_TOKENS: Token[] = [
-  TESTNET_ALL_TOKENS[2], // USDC
-  TESTNET_ALL_TOKENS[1], // USDT
+  TESTNET_ALL_TOKENS[0], // WC2FLR
+  TESTNET_ALL_TOKENS[1], // USDT0
+  TESTNET_ALL_TOKENS[2], // FXRP
 ]
 
 // Legacy export - use ALL_TOKENS for general token list
@@ -109,21 +117,28 @@ export interface Pool {
   binStep: number
 }
 
-// Testnet pools - All deployed pools (some have swap issues due to decimal bug)
+// Testnet pools - Coston2 deployed pools
 const TESTNET_POOLS: Pool[] = [
   {
-    // WFLR/USDT pool - has decimal bug, swaps don't work but positions display
-    address: '0x4eD647bF1821878870e50c115785D2b4674fA5A2',
-    tokenX: TESTNET_ALL_TOKENS[0], // WFLR
-    tokenY: TESTNET_ALL_TOKENS[1], // USDT
-    binStep: 15,
+    // WC2FLR/USDT0 pool - main trading pool
+    address: '0x081D1B7FB116081E33fB8CE4bC1b67e1beC8fC5b',
+    tokenX: TESTNET_ALL_TOKENS[0], // WC2FLR
+    tokenY: TESTNET_ALL_TOKENS[1], // USDT0
+    binStep: 10,
   },
   {
-    // USDC/USDT pool - working pool with same decimals
-    address: '0x7ceC6A917f881F2916C6243c48D9c43ff5594459',
-    tokenX: TESTNET_ALL_TOKENS[2], // USDC
-    tokenY: TESTNET_ALL_TOKENS[1], // USDT
-    binStep: 15,
+    // WC2FLR/FXRP pool
+    address: '0x973b97F283dc6aC10b3b8ba3289dc55494f86540',
+    tokenX: TESTNET_ALL_TOKENS[0], // WC2FLR
+    tokenY: TESTNET_ALL_TOKENS[2], // FXRP
+    binStep: 10,
+  },
+  {
+    // FXRP/USDT0 pool
+    address: '0x63865F25f55aC6D2A35eB1Ad16E9Cbd14Ed335A9',
+    tokenX: TESTNET_ALL_TOKENS[2], // FXRP
+    tokenY: TESTNET_ALL_TOKENS[1], // USDT0
+    binStep: 10,
   },
 ]
 

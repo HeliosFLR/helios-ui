@@ -105,9 +105,9 @@ function ToastItem({ toast, onRemove }: { toast: Toast, onRemove: () => void }) 
     },
     warning: {
       icon: AlertCircle,
-      bg: 'bg-amber-500/10 border-amber-500/30',
-      iconColor: 'text-amber-500',
-      titleColor: 'text-amber-400',
+      bg: 'bg-dune-400/10 border-dune-400/30',
+      iconColor: 'text-dune-400',
+      titleColor: 'text-dune-300',
     },
     info: {
       icon: Info,
@@ -141,7 +141,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast, onRemove: () => void }) 
               href={`https://coston2-explorer.flare.network/tx/${txHash}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-amber-500 hover:text-amber-400 mt-2"
+              className="inline-flex items-center gap-1 text-xs text-dune-400 hover:text-dune-300 mt-2"
             >
               View transaction
               <ExternalLink className="h-3 w-3" />

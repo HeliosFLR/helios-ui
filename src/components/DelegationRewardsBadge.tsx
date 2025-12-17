@@ -63,7 +63,7 @@ export function DelegationRewardsInfo({ className }: { className?: string }) {
   return (
     <div className={cn(
       'p-4 rounded-xl',
-      'bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-amber-500/10',
+      'bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-dune-400/10',
       'border border-purple-500/20',
       className
     )}>
@@ -79,7 +79,7 @@ export function DelegationRewardsInfo({ className }: { className?: string }) {
 
       <div className="space-y-2 text-sm">
         <div className="flex items-center gap-2 text-zinc-300">
-          <Flame className="h-4 w-4 text-amber-500" />
+          <Flame className="h-4 w-4 text-dune-400" />
           <span>FTSO delegation rewards from voting power</span>
         </div>
         <div className="flex items-center gap-2 text-zinc-300">

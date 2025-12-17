@@ -15,7 +15,7 @@ import {
   ArrowRight,
   Flame,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, calculatePriceFromBinId } from '@/lib/utils'
 import { CONTRACTS, type Token } from '@/config/contracts'
 import { LB_ROUTER_ABI, LB_PAIR_ABI } from '@/contracts/abis'
 
@@ -310,7 +310,7 @@ export function RebalanceModal({ isOpen, onClose, position, onSuccess }: Rebalan
       {/* Modal */}
       <div className="relative w-full max-w-lg glass-card rounded-3xl overflow-hidden animate-bounce-in">
         {/* Header Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-gradient-to-b from-amber-500/20 to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-gradient-to-b from-dune-400/20 to-transparent pointer-events-none" />
 
         {/* Close Button */}
         <button
@@ -407,8 +407,8 @@ function PreviewStep({
 
       {/* Header */}
       <div className="text-center">
-        <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 mb-4">
-          <RefreshCw className="h-8 w-8 text-amber-500" />
+        <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-gradient-to-br from-dune-400/20 to-dune-500/20 mb-4">
+          <RefreshCw className="h-8 w-8 text-dune-400" />
         </div>
         <h2 className="text-2xl font-bold text-white mb-2">Rebalance Position</h2>
         <p className="text-zinc-400 text-sm">
@@ -435,7 +435,7 @@ function PreviewStep({
             <div className={cn(
               'text-2xl font-bold',
               efficiencyScore >= 70 ? 'text-emerald-500' :
-              efficiencyScore >= 40 ? 'text-amber-500' : 'text-red-500'
+              efficiencyScore >= 40 ? 'text-dune-400' : 'text-red-500'
             )}>
               {efficiencyScore}%
             </div>
@@ -458,7 +458,7 @@ function PreviewStep({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <span className="text-sm text-zinc-400">New Bin Range</span>
-          <span className="text-sm font-medium text-amber-500">±{newBinRange} bins</span>
+          <span className="text-sm font-medium text-dune-400">±{newBinRange} bins</span>
         </div>
 
         <input
@@ -479,29 +479,53 @@ function PreviewStep({
       {/* Bin Range Visualization */}
       <div className="p-4 rounded-xl bg-zinc-800/30 border border-white/5">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs text-zinc-500">Range Preview</span>
+          <span className="text-xs text-zinc-500">Price Range Preview</span>
           <div className="flex items-center gap-2 text-xs">
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-zinc-600" />
               Current
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-amber-500" />
+              <span className="w-2 h-2 rounded-full bg-dune-400" />
               New
             </span>
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-2 font-mono text-sm">
-          <span className="text-zinc-600">[{currentBins.min} - {currentBins.max}]</span>
-          <ArrowRight className="h-4 w-4 text-amber-500" />
-          <span className="text-amber-500">[{newBins.min} - {newBins.max}]</span>
+        {/* Price ranges */}
+        <div className="space-y-2 mb-3">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-zinc-500">Current:</span>
+            <span className="text-zinc-400 font-mono">
+              {calculatePriceFromBinId(currentBins.min, position.binStep, position.tokenX.decimals, position.tokenY.decimals).toFixed(4)}
+              {' - '}
+              {calculatePriceFromBinId(currentBins.max, position.binStep, position.tokenX.decimals, position.tokenY.decimals).toFixed(4)}
+            </span>
+          </div>
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-dune-400">New:</span>
+            <span className="text-dune-400 font-mono font-medium">
+              {calculatePriceFromBinId(newBins.min, position.binStep, position.tokenX.decimals, position.tokenY.decimals).toFixed(4)}
+              {' - '}
+              {calculatePriceFromBinId(newBins.max, position.binStep, position.tokenX.decimals, position.tokenY.decimals).toFixed(4)}
+            </span>
+          </div>
         </div>
 
-        <div className="mt-3 flex items-center justify-center gap-1">
-          <Target className="h-4 w-4 text-amber-500" />
+        {/* Bin IDs (secondary) */}
+        <div className="flex items-center justify-center gap-2 font-mono text-xs text-zinc-600">
+          <span>Bins: [{currentBins.min} - {currentBins.max}]</span>
+          <ArrowRight className="h-3 w-3 text-dune-400" />
+          <span className="text-dune-400/70">[{newBins.min} - {newBins.max}]</span>
+        </div>
+
+        <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-center gap-1">
+          <Target className="h-4 w-4 text-dune-400" />
           <span className="text-xs text-zinc-400">
-            Active Bin: <span className="text-white font-medium">{position.activeId}</span>
+            Current Price: <span className="text-white font-medium font-mono">
+              {calculatePriceFromBinId(position.activeId, position.binStep, position.tokenX.decimals, position.tokenY.decimals).toFixed(4)}
+            </span>
+            {' '}{position.tokenY.symbol}/{position.tokenX.symbol}
           </span>
         </div>
       </div>
@@ -535,7 +559,7 @@ function ProcessingStep({ step, txHash }: { step: 'approving' | 'removing' | 'ad
   const stepConfig = {
     approving: {
       title: 'Approving...',
-      description: 'Approving LB tokens for rebalance',
+      description: 'Approving LP tokens for rebalance',
       stepNumber: 0,
     },
     removing: {
@@ -556,9 +580,9 @@ function ProcessingStep({ step, txHash }: { step: 'approving' | 'removing' | 'ad
   return (
     <div className="py-12 text-center">
       <div className="relative inline-flex items-center justify-center mb-6">
-        <div className="absolute inset-0 rounded-full bg-amber-500/20 animate-ping" />
-        <div className="relative p-6 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20">
-          <RefreshCw className="h-12 w-12 text-amber-500 animate-spin" />
+        <div className="absolute inset-0 rounded-full bg-dune-400/20 animate-ping" />
+        <div className="relative p-6 rounded-full bg-gradient-to-br from-dune-400/20 to-dune-500/20">
+          <RefreshCw className="h-12 w-12 text-dune-400 animate-spin" />
         </div>
       </div>
 
@@ -570,7 +594,7 @@ function ProcessingStep({ step, txHash }: { step: 'approving' | 'removing' | 'ad
           href={explorerUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-amber-500 hover:text-amber-400 underline inline-block"
+          className="text-xs text-dune-400 hover:text-dune-300 underline inline-block"
         >
           View on Explorer
         </a>
@@ -582,14 +606,14 @@ function ProcessingStep({ step, txHash }: { step: 'approving' | 'removing' | 'ad
         <div className={cn(
           'flex items-center justify-center w-8 h-8 rounded-full transition-all text-sm font-medium',
           config.stepNumber >= 1 ? 'bg-emerald-500 text-white' :
-          step === 'approving' ? 'bg-amber-500 text-black' : 'bg-zinc-700 text-zinc-400'
+          step === 'approving' ? 'bg-dune-400 text-black' : 'bg-zinc-700 text-zinc-400'
         )}>
           {config.stepNumber >= 1 ? <CheckCircle2 className="h-4 w-4" /> : '1'}
         </div>
 
         <div className="w-8 h-1 rounded-full bg-zinc-700 overflow-hidden">
           <div className={cn(
-            'h-full bg-amber-500 transition-all duration-500',
+            'h-full bg-dune-400 transition-all duration-500',
             config.stepNumber >= 1 ? 'w-full' : 'w-0'
           )} />
         </div>
@@ -598,14 +622,14 @@ function ProcessingStep({ step, txHash }: { step: 'approving' | 'removing' | 'ad
         <div className={cn(
           'flex items-center justify-center w-8 h-8 rounded-full transition-all text-sm font-medium',
           config.stepNumber >= 2 ? 'bg-emerald-500 text-white' :
-          step === 'removing' ? 'bg-amber-500 text-black' : 'bg-zinc-700 text-zinc-400'
+          step === 'removing' ? 'bg-dune-400 text-black' : 'bg-zinc-700 text-zinc-400'
         )}>
           {config.stepNumber >= 2 ? <CheckCircle2 className="h-4 w-4" /> : '2'}
         </div>
 
         <div className="w-8 h-1 rounded-full bg-zinc-700 overflow-hidden">
           <div className={cn(
-            'h-full bg-amber-500 transition-all duration-500',
+            'h-full bg-dune-400 transition-all duration-500',
             config.stepNumber >= 2 ? 'w-full' : 'w-0'
           )} />
         </div>
@@ -613,16 +637,16 @@ function ProcessingStep({ step, txHash }: { step: 'approving' | 'removing' | 'ad
         {/* Step 3: Add */}
         <div className={cn(
           'flex items-center justify-center w-8 h-8 rounded-full transition-all text-sm font-medium',
-          step === 'adding' ? 'bg-amber-500 text-black' : 'bg-zinc-700 text-zinc-400'
+          step === 'adding' ? 'bg-dune-400 text-black' : 'bg-zinc-700 text-zinc-400'
         )}>
           3
         </div>
       </div>
 
       <div className="flex justify-center gap-6 mt-4 text-xs text-zinc-500">
-        <span className={cn(step === 'approving' && 'text-amber-500')}>Approve</span>
-        <span className={cn(step === 'removing' && 'text-amber-500')}>Remove</span>
-        <span className={cn(step === 'adding' && 'text-amber-500')}>Add</span>
+        <span className={cn(step === 'approving' && 'text-dune-400')}>Approve</span>
+        <span className={cn(step === 'removing' && 'text-dune-400')}>Remove</span>
+        <span className={cn(step === 'adding' && 'text-dune-400')}>Add</span>
       </div>
     </div>
   )
@@ -659,7 +683,7 @@ function ErrorStep({
         </button>
         <button
           onClick={onRetry}
-          className="px-6 py-3 rounded-xl bg-amber-500 text-black font-medium hover:bg-amber-400 transition-colors flex items-center gap-2"
+          className="px-6 py-3 rounded-xl bg-dune-400 text-black font-medium hover:bg-dune-300 transition-colors flex items-center gap-2"
         >
           <RefreshCw className="h-4 w-4" />
           Try Again
@@ -710,11 +734,11 @@ function SuccessStep({
       </div>
 
       {/* Achievement */}
-      <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/10 border border-amber-500/20 mb-6 animate-shimmer">
+      <div className="p-4 rounded-xl bg-gradient-to-r from-dune-400/10 via-dune-500/10 to-dune-400/10 border border-dune-400/20 mb-6 animate-shimmer">
         <div className="flex items-center justify-center gap-2">
-          <TrendingUp className="h-5 w-5 text-amber-500" />
-          <span className="text-amber-400 font-medium">100% Efficiency Achieved!</span>
-          <Flame className="h-5 w-5 text-amber-500 animate-fire-flicker" />
+          <TrendingUp className="h-5 w-5 text-dune-400" />
+          <span className="text-dune-300 font-medium">100% Efficiency Achieved!</span>
+          <Flame className="h-5 w-5 text-dune-400 animate-fire-flicker" />
         </div>
       </div>
 
@@ -734,7 +758,7 @@ function EfficiencyRing({ score, size, color = 'amber' }: { score: number; size:
 
   const colorClass = color === 'emerald' ? 'stroke-emerald-500' :
     score >= 70 ? 'stroke-emerald-500' :
-    score >= 40 ? 'stroke-amber-500' : 'stroke-red-500'
+    score >= 40 ? 'stroke-dune-400' : 'stroke-red-500'
 
   return (
     <svg width={size} height={size} className="transform -rotate-90">
@@ -767,7 +791,7 @@ function Confetti() {
     id: i,
     x: Math.random() * 100,
     delay: Math.random() * 0.5,
-    color: ['#f59e0b', '#f97316', '#ea580c', '#22c55e', '#8b5cf6'][Math.floor(Math.random() * 5)],
+    color: ['#C9A76C', '#B8956A', '#9A7B4F', '#22c55e', '#8b5cf6'][Math.floor(Math.random() * 5)],
   }))
 
   return (

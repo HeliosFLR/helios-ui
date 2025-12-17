@@ -128,7 +128,7 @@ export function RemoveLiquidityModal({ isOpen, onClose, pool }: RemoveLiquidityM
         <div className="p-6 space-y-6">
           {positionsLoading ? (
             <div className="py-12 text-center">
-              <Loader2 className="h-8 w-8 animate-spin text-amber-500 mx-auto" />
+              <Loader2 className="h-8 w-8 animate-spin text-dune-400 mx-auto" />
               <p className="mt-4 text-zinc-500">Loading your positions...</p>
             </div>
           ) : !hasPosition ? (
@@ -256,7 +256,7 @@ export function RemoveLiquidityModal({ isOpen, onClose, pool }: RemoveLiquidityM
                     disabled={isRemoving || isConfirming || positionsToRemove.length === 0}
                     className={cn(
                       'w-full py-4 px-6 rounded-2xl font-semibold transition-all',
-                      'bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-400 hover:to-orange-400 text-white',
+                      'bg-gradient-to-r from-red-500 to-dune-500 hover:from-red-400 hover:to-orange-400 text-white',
                       'disabled:opacity-50 disabled:cursor-not-allowed'
                     )}
                   >
